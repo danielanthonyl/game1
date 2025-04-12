@@ -1,0 +1,6 @@
+.vscode/
+.git
+
+# compiled files
+**/*.o
+**/*.exe

@@ -1,4 +1,4 @@
-#include "game1/animations.hpp"
+#include "animations.hpp"
 
 void animate(sf::Texture texture, sf::Sprite sprite)
 {

@@ -4,7 +4,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Window.hpp"
 #include "nlohmann/json.hpp"
-#include "game1/animations.hpp"
+#include "animations.hpp"
 
 using json = nlohmann::json;
 
@@ -25,7 +25,6 @@ struct SpriteSheet
     std::vector<FrameData> frames;
 };
 
-
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Frame, x, y, w, h);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FrameData, frame, filename, duration);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpriteSheet, frames);
@@ -41,7 +40,7 @@ int main()
     int y = 0;
     int width = 27;
     int height = 48;
-    int spriteFrame = 5;
+    // int spriteFrame = 5;
     int currentFrame = 0;
     float elapsedTime = 0.0f;
     float frameTime = 0.1f; // 10 frames per second
@@ -94,14 +93,11 @@ int main()
             Frame frame = alucardIdle.frames[currentFrame].frame;
             sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w, frame.h}));
 
-            if(currentFrame == alucardIdle.frames.size() - 1)
+            int frameIndex = alucardIdle.frames.size() - 1;
+
+            if(currentFrame == frameIndex)
             {
                 animationCycleCount++;
-            }
-
-            if(animationCycleCount == 4)
-            {
-                sprite.setTexture(bmoTexture);
             }
         }
 
