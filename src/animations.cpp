@@ -1,8 +1,8 @@
 #include "animations.hpp"
 
-void animate(sf::Texture texture, sf::Sprite sprite)
+void animate(const sf::Texture& texture, const SpriteSheet& spriteSheet, sf::Sprite& sprite)
 {
-  std::cout << "animate" << std::endl;
+  sprite.setTexture(texture);
 
   // currentFrame = (currentFrame + 1) % alucardIdle.frames.size();
   // Frame frame = alucardIdle.frames[currentFrame].frame;

@@ -5,108 +5,100 @@
 #include "SFML/Window.hpp"
 #include "nlohmann/json.hpp"
 #include "animations.hpp"
-
-using json = nlohmann::json;
-
-struct Frame
-{
-    int x, y, w, h;
-};
-
-struct FrameData
-{
-    Frame frame;
-    std::string filename;
-    int duration;
-};
-
-struct SpriteSheet
-{
-    std::vector<FrameData> frames;
-};
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Frame, x, y, w, h);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FrameData, frame, filename, duration);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SpriteSheet, frames);
+#include "spriteSheet.hpp"
+#include "SpriteAnimator.hpp"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({400, 400}), "Game 1");
+  sf::RenderWindow window(sf::VideoMode({400, 400}), "Game 1");
 
-    std::ifstream file("./alucard.json");
-    SpriteSheet alucardIdle = json::parse(file).get<SpriteSheet>();
+  std::ifstream idleFile("./alucard.json");
+  std::ifstream run2File("./run2.json");
 
-    int x = 0;
-    int y = 0;
-    int width = 27;
-    int height = 48;
-    // int spriteFrame = 5;
-    int currentFrame = 0;
-    float elapsedTime = 0.0f;
-    float frameTime = 0.1f; // 10 frames per second
-    bool isKeyPressed = false;
+  SpriteSheet idleData = json::parse(idleFile).get<SpriteSheet>();
+  SpriteSheet run2Data = json::parse(run2File).get<SpriteSheet>();
 
-    sf::Texture texture("./image.png");
-    sf::Texture bmoTexture("./bmo.png");
+  sf::Texture idleTexture("./image.png");
+  sf::Texture bmoTexture("./bmo.png");
+  sf::Texture run2Texture("./run2.png");
 
-    sf::Sprite sprite(texture);
-    sprite.setTextureRect(sf::IntRect({x, y}, {width, height}));
-    sprite.setScale({5.0f, 5.0f});
+  int x = 0;
+  int y = 0;
+  int width = 27;
+  int height = 48;
+  // int spriteFrame = 5;
+  int currentFrame = 0;
+  // float elapsedTime = 0.0f;
+  // float frameTime = 0.1f; // 10 frames per second
+  bool isKeyPressed = false;
 
-    // game clock
-    sf::Clock clock;
+  SpriteSheet data = idleData;
+  sf::Texture texture = idleTexture;
 
-    int animationCycleCount = 0;
+  sf::Sprite sprite(texture);
+  sprite.setTextureRect(sf::IntRect({x, y}, {width, height}));
+  sprite.setScale({5.0f, 5.0f});
 
-    while (window.isOpen())
+  SpriteAnimator animator(sprite);
+  animator.add(idleTexture, idleData, State::IDLE);
+  animator.add(run2Texture, run2Data, State::RUNNING);
+  animator.play(State::IDLE);
+
+  // game clock
+  sf::Clock clock;
+
+  int animationCycleCount = 0;
+
+  while (window.isOpen())
+  {
+
+    while (const std::optional event = window.pollEvent())
     {
-
-        while (const std::optional event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-            {
-                window.close();
-            }
-        }
-
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-        {
-            if(isKeyPressed == false)
-            {
-                animate(bmoTexture, sprite);
-                isKeyPressed = true;
-            }
-        }
-        else
-        {
-            isKeyPressed = false;
-        }
-
-
-        elapsedTime += clock.restart().asSeconds();
-        if (elapsedTime >= frameTime)
-        {
-            elapsedTime = 0.0f;
-
-            currentFrame = (currentFrame + 1) % alucardIdle.frames.size();
-            Frame frame = alucardIdle.frames[currentFrame].frame;
-            sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w, frame.h}));
-
-            int frameIndex = alucardIdle.frames.size() - 1;
-
-            if(currentFrame == frameIndex)
-            {
-                animationCycleCount++;
-            }
-        }
-
-        window.clear(sf::Color::White);
-        window.draw(sprite);
-        window.display();
+      if (event->is<sf::Event::Closed>())
+      {
+        window.close();
+      }
     }
 
-    return 0;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+    {
+      if (isKeyPressed == false)
+      {
+        if (animator.getState() != State::RUNNING)
+        {
+          animator.play(State::RUNNING);
+        }
+
+        isKeyPressed = true;
+      }
+    }
+    else
+    {
+      if (isKeyPressed == true)
+      {
+        if (animator.getState() != State::IDLE)
+        {
+          animator.play(State::IDLE);
+        }
+      }
+
+      isKeyPressed = false;
+    }
+
+    float deltaTime = clock.restart().asSeconds();
+    animator.update(deltaTime);
+
+    int frameIndex = data.frames.size() - 1;
+
+    if (currentFrame == frameIndex)
+    {
+      animationCycleCount++;
+    }
+
+    window.clear(sf::Color::White);
+    window.draw(sprite);
+    window.display();
+  }
+
+  return 0;
 }
-
-
