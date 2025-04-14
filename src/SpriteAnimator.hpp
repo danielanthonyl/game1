@@ -25,8 +25,8 @@ public:
   void update(const float &deltaTime);
   void play(const State animationState);
 
-  State getState() const;
-  sf::Sprite getSprite() const;
+  const State getState() const;
+  const sf::Sprite getSprite() const;
 
   bool isInStandby() const;
   void exitStandby();
@@ -34,7 +34,7 @@ public:
 private:
   void updateFrame();
   void updateStandbyState();
-  static sf::Texture &getDummyTexture();
+  sf::Texture defaultTexture;
 
   struct StandbyConfig {
     int cyclesBeforeStandby = 0;

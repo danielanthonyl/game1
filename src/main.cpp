@@ -22,34 +22,14 @@ int main()
   sf::Texture bmoTexture("./bmo.png");
   sf::Texture run2Texture("./run2.png");
 
-  // int x = 0;
-  // int y = 0;
-  // int width = 27;
-  // int height = 48;
-  // int spriteFrame = 5;
-  // int currentFrame = 0;
-  // float elapsedTime = 0.0f;
-  // float frameTime = 0.1f; // 10 frames per second
   bool isKeyPressed = false;
-
-  // SpriteSheet data = idleData;
-  // sf::Texture texture = idleTexture;
-
-  // sf::Sprite sprite(idleTexture);
-  // sprite.setTextureRect(sf::IntRect({x, y}, {width, height}));
-  // sprite.setScale({5.0f, 5.0f});
 
   SpriteAnimator animator;
   animator.add(idleTexture, idleData, State::IDLE, 6);
   animator.add(run2Texture, run2Data, State::RUNNING);
   animator.play(State::IDLE);
 
-  // animator.configureStandby(State::IDLE, 6, 0);
-
-  // game clocstd::cout << "bbbb" << std::endl;k
   sf::Clock clock;
-
-  // int animationCycleCount = 0;
 
   while (window.isOpen())
   {
@@ -68,7 +48,6 @@ int main()
       {
         if (animator.getState() != State::RUNNING)
         {
-          // animationCycleCount = 0;
           animator.play(State::RUNNING);
         }
 
