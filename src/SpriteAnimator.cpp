@@ -1,8 +1,9 @@
 #include "SpriteAnimator.hpp"
 #include <iostream>
 
-SpriteAnimator::SpriteAnimator(sf::Sprite &spriteData) : sprite(spriteData)
+SpriteAnimator::SpriteAnimator() : sprite(getDummyTexture())
 {
+  sprite.scale({5.0f, 5.0f});
 }
 
 void SpriteAnimator::add(const sf::Texture &texture,
@@ -23,8 +24,30 @@ void SpriteAnimator::add(const sf::Texture &texture,
   animation.standby.standbyFrame = standbyFrame;
   animation.standby.onEnterStandby = onEnterStandby;
 
-
   animations[animationState] = animation;
+}
+
+sf::Texture &SpriteAnimator::getDummyTexture()
+{
+  static sf::Texture dummyTexture;
+  static bool dummyTextureInitialized = false;
+
+  if (!dummyTextureInitialized)
+  {
+    // Create a 1x1 transparent pixel image
+    sf::Image dummyImage;
+    dummyImage.resize({1, 1}, sf::Color::Transparent);
+
+    // Load the image into the texture
+    bool success = dummyTexture.loadFromImage(dummyImage);
+    if (!success)
+    {
+      std::cerr << "Failed to create dummy texture" << std::endl;
+    }
+    dummyTextureInitialized = true;
+  }
+
+  return dummyTexture;
 }
 
 void SpriteAnimator::update(const float &deltaTime)
@@ -87,6 +110,7 @@ void SpriteAnimator::play(const State animationState)
 
     Animation &animation = animations[currentState];
     sprite.setTexture(animation.texture);
+
     updateFrame();
   }
 }
@@ -101,6 +125,11 @@ void SpriteAnimator::updateFrame()
 State SpriteAnimator::getState() const
 {
   return currentState;
+}
+
+sf::Sprite SpriteAnimator::getSprite() const
+{
+  return sprite;
 }
 
 bool SpriteAnimator::isInStandby() const

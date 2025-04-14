@@ -22,10 +22,10 @@ int main()
   sf::Texture bmoTexture("./bmo.png");
   sf::Texture run2Texture("./run2.png");
 
-  int x = 0;
-  int y = 0;
-  int width = 27;
-  int height = 48;
+  // int x = 0;
+  // int y = 0;
+  // int width = 27;
+  // int height = 48;
   // int spriteFrame = 5;
   // int currentFrame = 0;
   // float elapsedTime = 0.0f;
@@ -35,11 +35,11 @@ int main()
   // SpriteSheet data = idleData;
   // sf::Texture texture = idleTexture;
 
-  sf::Sprite sprite(idleTexture);
-  sprite.setTextureRect(sf::IntRect({x, y}, {width, height}));
-  sprite.setScale({5.0f, 5.0f});
+  // sf::Sprite sprite(idleTexture);
+  // sprite.setTextureRect(sf::IntRect({x, y}, {width, height}));
+  // sprite.setScale({5.0f, 5.0f});
 
-  SpriteAnimator animator(sprite);
+  SpriteAnimator animator;
   animator.add(idleTexture, idleData, State::IDLE, 6);
   animator.add(run2Texture, run2Data, State::RUNNING);
   animator.play(State::IDLE);
@@ -92,7 +92,7 @@ int main()
     animator.update(deltaTime);
 
     window.clear(sf::Color::White);
-    window.draw(sprite);
+    window.draw(animator.getSprite());
     window.display();
   }
 
