@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
-#include "spriteSheet.hpp"
+#include "AnimationData.hpp"
 #include "spdlog/spdlog.h"
 
 enum class State
@@ -20,7 +20,7 @@ public:
   SpriteAnimator();
 
   void add(const sf::Texture &texture,
-           const SpriteSheet &data,
+           const Animation::TextureData &data,
            const State animationState,
            const int cycles = 0,
            const int standbyFrame = 0,
@@ -48,10 +48,10 @@ private:
     std::function<void()> onEnterStandby = nullptr;
   };
 
-  struct Animation
+  struct AnimationConfig
   {
     sf::Texture texture;
-    SpriteSheet data;
+    Animation::TextureData data;
 
     //DEBT! later on all of these should go inside "data"
     // but still needs to update the json file standard
@@ -60,7 +60,7 @@ private:
   };
 
   sf::Sprite sprite;
-  std::map<State, Animation> animations;
+  std::map<State, AnimationConfig> animations;
 
   State currentState = State::IDLE;
   int currentFrame = 0;

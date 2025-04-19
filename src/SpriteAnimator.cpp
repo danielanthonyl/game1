@@ -16,14 +16,14 @@ SpriteAnimator::SpriteAnimator()
 }
 
 void SpriteAnimator::add(const sf::Texture &texture,
-                         const SpriteSheet &data,
+                         const Animation::TextureData &data,
                          const State animationState,
                          const int cycles,
                          const int standbyFrame,
                          const float frameTime,
                          std::function<void()> onEnterStandby)
 {
-  Animation animation;
+  AnimationConfig animation;
   animation.texture = texture;
   animation.data = data;
 
@@ -43,7 +43,7 @@ void SpriteAnimator::update(const float &deltaTime)
     return;
   }
 
-  Animation &currentAnimation = animations[currentState];
+  AnimationConfig &currentAnimation = animations[currentState];
   elapsedTime += deltaTime;
 
   if (elapsedTime >= currentAnimation.frameTime)
@@ -72,9 +72,9 @@ void SpriteAnimator::updateStandbyState()
   {
     inStandbyMode = true;
 
-    Animation &animation = animations[currentState];
+    AnimationConfig &animation = animations[currentState];
     currentFrame = standby.standbyFrame;
-    Frame standbyFrame = animation.data.frames[currentFrame].frame;
+    Animation::Frame standbyFrame = animation.data.frames[currentFrame].frame;
     sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y}, {standbyFrame.w, standbyFrame.h}));
 
     if (standby.onEnterStandby)
@@ -94,7 +94,7 @@ void SpriteAnimator::play(const State animationState)
     inStandbyMode = false;
     animationCycleCount = 0;
 
-    Animation &animation = animations[currentState];
+    AnimationConfig &animation = animations[currentState];
     sprite.setTexture(animation.texture);
 
     updateFrame();
@@ -102,8 +102,8 @@ void SpriteAnimator::play(const State animationState)
 
 void SpriteAnimator::updateFrame()
 {
-  Animation &currentAnimation = animations[currentState];
-  Frame frame = currentAnimation.data.frames[currentFrame].frame;
+  AnimationConfig &currentAnimation = animations[currentState];
+  Animation::Frame frame = currentAnimation.data.frames[currentFrame].frame;
   sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w, frame.h}));
 }
 

@@ -4,8 +4,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Window.hpp"
 #include "nlohmann/json.hpp"
-#include "animations.hpp"
-#include "spriteSheet.hpp"
+#include "AnimationData.hpp"
 #include "SpriteAnimator.hpp"
 
 int main()
@@ -15,8 +14,8 @@ int main()
   std::ifstream idleFile("./idle.json");
   std::ifstream run2File("./running.json");
 
-  SpriteSheet idleData = json::parse(idleFile).get<SpriteSheet>();
-  SpriteSheet run2Data = json::parse(run2File).get<SpriteSheet>();
+  Animation::TextureData idleData = json::parse(idleFile).get<Animation::TextureData>();
+  Animation::TextureData run2Data = json::parse(run2File).get<Animation::TextureData>();
 
   sf::Texture idleTexture("./idle.png");
   sf::Texture run2Texture("./running.png");
