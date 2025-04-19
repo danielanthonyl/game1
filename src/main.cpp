@@ -12,20 +12,19 @@ int main()
 {
   sf::RenderWindow window(sf::VideoMode({400, 400}), "Game 1");
 
-  std::ifstream idleFile("./alucard.json");
-  std::ifstream run2File("./run2.json");
+  std::ifstream idleFile("./crow_idle.json");
+  std::ifstream run2File("./crow_walk.json");
 
   SpriteSheet idleData = json::parse(idleFile).get<SpriteSheet>();
   SpriteSheet run2Data = json::parse(run2File).get<SpriteSheet>();
 
-  sf::Texture idleTexture("./image.png");
-  sf::Texture bmoTexture("./bmo.png");
-  sf::Texture run2Texture("./run2.png");
+  sf::Texture idleTexture("./crow_idle.png");
+  sf::Texture run2Texture("./crow_walk.png");
 
   bool isKeyPressed = false;
 
   SpriteAnimator animator;
-  animator.add(idleTexture, idleData, State::IDLE, 6);
+  animator.add(idleTexture, idleData, State::IDLE);
   animator.add(run2Texture, run2Data, State::RUNNING);
   animator.play(State::IDLE);
 

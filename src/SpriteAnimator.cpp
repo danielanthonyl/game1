@@ -36,12 +36,6 @@ void SpriteAnimator::add(const sf::Texture &texture,
   animations[animationState] = animation;
 }
 
-// sf::Texture &SpriteAnimator::getDummyTexture()
-// {
-//   static sf::Texture dummyTexture(sf::Vector2u(1, 1));
-//   return dummyTexture;
-// }
-
 void SpriteAnimator::update(const float &deltaTime)
 {
   if (inStandbyMode)
@@ -92,8 +86,8 @@ void SpriteAnimator::updateStandbyState()
 
 void SpriteAnimator::play(const State animationState)
 {
-  if (currentState != animationState || inStandbyMode)
-  {
+  spdlog::info("animation switching: {} -> {}", parseState(currentState), parseState(animationState));
+
     currentState = animationState;
     currentFrame = 0;
     elapsedTime = 0.0f;
@@ -104,7 +98,6 @@ void SpriteAnimator::play(const State animationState)
     sprite.setTexture(animation.texture);
 
     updateFrame();
-  }
 }
 
 void SpriteAnimator::updateFrame()
@@ -139,4 +132,10 @@ void SpriteAnimator::exitStandby()
     animationCycleCount = 0;
     updateFrame();
   };
+}
+
+std::string SpriteAnimator::parseState(State animationState)
+{
+  auto it = StateToString.find(animationState);
+  return it != StateToString.end() ? it->second : "UNKNOWN";
 }

@@ -2,12 +2,17 @@
 
 #include "SFML/Graphics.hpp"
 #include "spriteSheet.hpp"
+#include "spdlog/spdlog.h"
 
 enum class State
 {
   IDLE,
   RUNNING
 };
+
+static std::map<State, std::string> StateToString = {
+    {State::IDLE, "IDLE"},
+    {State::RUNNING, "RUNNING"}};
 
 class SpriteAnimator
 {
@@ -34,6 +39,7 @@ public:
 private:
   void updateFrame();
   void updateStandbyState();
+  std::string parseState(State animationState);
   sf::Texture defaultTexture;
 
   struct StandbyConfig {
@@ -56,7 +62,7 @@ private:
   sf::Sprite sprite;
   std::map<State, Animation> animations;
 
-  State currentState;
+  State currentState = State::IDLE;
   int currentFrame = 0;
   float elapsedTime = 0.0f;
 
