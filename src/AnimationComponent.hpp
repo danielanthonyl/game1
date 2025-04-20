@@ -41,14 +41,21 @@ class AnimationComponent {
    * @param frameTime Time between frames in seconds
    * @param onEnterStandby Callback when entering standby mode
    */
-  void addAnimation(const std::string &textureId, const sf::Texture *texture,
-                    const Animation::TextureData *textureData, const int cycles,
-                    const int standbyFrame, const float frameTime,
-                    std::function<void()> onEnterStandby);
+  void addAnimation(const std::string &textureId,
+                    const sf::Texture *texture,
+                    const Animation::TextureData *textureData,
+                    const int cycles = 0,
+                    const int standbyFrame = 0,
+                    const float frameTime = 0.1f,
+                    std::function<void()> onEnterStandby = nullptr);
 
   void play(std::string textureId);
   void update(float deltaTime);
   void updateStandbyState();
+
+  // getters
+  sf::Sprite getSprite() const;
+  std::string getCurrentAnimationId() const;
 
 private:
   void updateFrame();
@@ -58,7 +65,7 @@ private:
   std::map<std::string, TextureConfig> textures;
   std::string currentTextureId;
   int currentFrame;
-  int elapsedTime;
-  float inStandbyMode;
-  bool animationCycleCount;
+  float elapsedTime;
+  bool inStandbyMode;
+  int animationCycleCount;
 };

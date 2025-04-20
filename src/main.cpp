@@ -2,70 +2,36 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 #include "AnimationData.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/Window.hpp"
 #include "SpriteAnimator.hpp"
+#include "spdlog/spdlog.h"
 #include "nlohmann/json.hpp"
+#include "Game.hpp"
+#include "Player.hpp"
 
 using json = nlohmann::json;
 
 int main() {
-  sf::RenderWindow window(sf::VideoMode({400, 400}), "Game 1");
+  spdlog::set_level(spdlog::level::info);
+  spdlog::info("Starting Game1");
 
-  std::ifstream idleFile("./idle.json");
-  std::ifstream run2File("./running.json");
+  Game game("Game 1", 800, 800);
 
-  Animation::TextureData idleData =
-      json::parse(idleFile).get<Animation::TextureData>();
-  Animation::TextureData run2Data =
-      json::parse(run2File).get<Animation::TextureData>();
+  game.initialize();
 
-  sf::Texture idleTexture("./idle.png");
-  sf::Texture run2Texture("./running.png");
+  auto player = std::make_unique<Player>("player1");
+  /* i think this is not necessary */
+  player->setPosition({0.0f, 0.0f});
+  game.addEntity(std::move(player));
 
-  bool isKeyPressed = false;
+  game.run();
 
-  SpriteAnimator animator;
-  animator.add(idleTexture, idleData, State::IDLE, 6);
-  animator.add(run2Texture, run2Data, State::RUNNING);
-  animator.play(State::IDLE);
-
-  sf::Clock clock;
-
-  while (window.isOpen()) {
-    while (const std::optional event = window.pollEvent()) {
-      if (event->is<sf::Event::Closed>()) {
-        window.close();
-      }
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-      if (isKeyPressed == false) {
-        if (animator.getState() != State::RUNNING) {
-          animator.play(State::RUNNING);
-        }
-
-        isKeyPressed = true;
-      }
-    } else {
-      if (isKeyPressed == true) {
-        if (animator.getState() != State::IDLE) {
-          animator.play(State::IDLE);
-        }
-      }
-
-      isKeyPressed = false;
-    }
-
-    float deltaTime = clock.restart().asSeconds();
-    animator.update(deltaTime);
-
-    window.clear(sf::Color::White);
-    window.draw(animator.getSprite());
-    window.display();
-  }
-
+  spdlog::info("Game shutting down.");
   return 0;
+
+
 }

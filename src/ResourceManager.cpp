@@ -1,22 +1,28 @@
 #include "ResourceManager.hpp"
 
-ResourceManager::ResourceManager(std::unique_ptr<JsonParser> parser)
-  : defaultTexture(sf::Vector2u(1, 1)),
-    defaultTextureData(Animation::TextureData()),
-    jsonParser(std::move(parser))
+// DEBT! Dependency injection
+#include "NlohmannJsonParser.hpp"
+
+ResourceManager::ResourceManager()
 {
+}
+
+ResourceManager &ResourceManager::getInstance()
+{
+  static ResourceManager instance;
+  return instance;
 }
 
 bool ResourceManager::loadTexture(const std::string id, const std::string texturePath)
 {
-  if(textures.find(id) != textures.end())
+  if (textures.find(id) != textures.end())
   {
     spdlog::info("Texture '{}' already loaded", id);
     return true;
   }
 
   sf::Texture texture;
-  if(!texture.loadFromFile(texturePath))
+  if (!texture.loadFromFile(texturePath))
   {
     spdlog::error("Failed to load texture: {}", texturePath);
     return false;
@@ -30,15 +36,15 @@ bool ResourceManager::loadTexture(const std::string id, const std::string textur
 
 bool ResourceManager::loadTextureData(const std::string id, const std::string textureDataPath)
 {
-  if(texturesDatas.find(id) != texturesDatas.end())
+  if (texturesDatas.find(id) != texturesDatas.end())
   {
     spdlog::info("Texture data '{}' already loaded", id);
     return true;
   }
 
-  Animation::TextureData textureData = jsonParser->parseTextureData(textureDataPath);
+  Animation::TextureData textureData = NlohmannJsonParser().parseTextureData(textureDataPath);
 
-  if(textureData.frames.empty())
+  if (textureData.frames.empty())
   {
     spdlog::error("Failed to load/parse texture data: {}", textureDataPath);
     return false;
@@ -56,4 +62,32 @@ bool ResourceManager::loadTextureAsset(std::string id, std::string texturePath, 
   bool textureDataLoaded = loadTextureData(id, textureDataPath);
 
   return textureLoaded && textureDataLoaded;
+}
+
+/* Getters */
+
+const sf::Texture &ResourceManager::getTexture(const std::string &textureId) const
+{
+  auto it = textures.find(textureId);
+
+  if (it != textures.end())
+  {
+    return it->second;
+  }
+
+  spdlog::warn("Texture {} not found. Returning default texture", textureId);
+  return defaultTexture;
+}
+
+const Animation::TextureData &ResourceManager::getTextureData(const std::string &textureDataId) const
+{
+  auto it = texturesDatas.find(textureDataId);
+
+  if (it != texturesDatas.end())
+  {
+    return it->second;
+  }
+
+  spdlog::warn("Texture data {} not found. Returning default texture data", textureDataId);
+  return defaultTextureData;
 }

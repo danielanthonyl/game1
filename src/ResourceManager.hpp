@@ -9,7 +9,7 @@
 class ResourceManager
 {
 public:
-  explicit ResourceManager(std::unique_ptr<JsonParser> parser);
+  explicit ResourceManager();
 
   /**
    * @brief load texture assets from files
@@ -41,11 +41,16 @@ public:
   bool loadTexture(const std::string id,
                    const std::string texturePath);
 
+  /* getters */
+  static ResourceManager& getInstance();
+  const sf::Texture& getTexture(const std::string& textureId) const;
+  const Animation::TextureData& getTextureData(const std::string& textureDataId) const;
+
 private:
-  std::unique_ptr<JsonParser> jsonParser;
   std::map<std::string, sf::Texture> textures;
   std::map<std::string, Animation::TextureData> texturesDatas;
 
-  sf::Texture defaultTexture;
+  /* error handling */
   Animation::TextureData defaultTextureData;
+  sf::Texture defaultTexture;
 };
