@@ -1,6 +1,29 @@
+# IDE and build system files
+.cache/
 .vscode/
-.git
+.git/
+compile_commands.json
 
-# compiled files
+# Build artifacts
 **/*.o
 **/*.exe
+bin/
+obj/
+
+# Debug files
+**/*.pdb
+**/*.ilk
+**/*.exp
+**/*.lib
+
+# Dependency directories
+libs/
+
+# Logs and temporary files
+**/*.log
+**/temp/
+**/tmp/
+
+# System files
+.DS_Store
+Thumbs.db

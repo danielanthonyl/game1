@@ -60,11 +60,11 @@ class AnimationComponent {
 private:
   void updateFrame();
 
-  sf::Sprite sprite;
   sf::Texture defaultTexture;
+  sf::Sprite sprite;
   std::map<std::string, TextureConfig> textures;
   std::string currentTextureId;
-  int currentFrame;
+  size_t currentFrame;
   float elapsedTime;
   bool inStandbyMode;
   int animationCycleCount;
