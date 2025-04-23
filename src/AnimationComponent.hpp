@@ -8,15 +8,18 @@
 #include "SFML/Graphics.hpp"
 #include "spdlog/spdlog.h"
 
-class AnimationComponent {
+class AnimationComponent
+{
  public:
-  struct StandbyConfig {
+  struct StandbyConfig
+  {
     int cyclesBeforeStandby = 0;
     size_t standbyFrame = 0;
     std::function<void()> onEnterStandby = nullptr;
   };
 
-  struct TextureConfig {
+  struct TextureConfig
+  {
     std::string textureId;
     const sf::Texture *texture = nullptr;
     const Animation::TextureData *textureData = nullptr;
@@ -41,11 +44,9 @@ class AnimationComponent {
    * @param frameTime Time between frames in seconds
    * @param onEnterStandby Callback when entering standby mode
    */
-  void addAnimation(const std::string &textureId,
-                    const sf::Texture *texture,
+  void addAnimation(const std::string &textureId, const sf::Texture *texture,
                     const Animation::TextureData *textureData,
-                    const int cycles = 0,
-                    const int standbyFrame = 0,
+                    const int cycles = 0, const int standbyFrame = 0,
                     const float frameTime = 0.1f,
                     std::function<void()> onEnterStandby = nullptr);
 
@@ -57,14 +58,14 @@ class AnimationComponent {
   sf::Sprite getSprite() const;
   std::string getCurrentAnimationId() const;
 
-private:
+ private:
   void updateFrame();
 
   sf::Sprite sprite;
   sf::Texture defaultTexture;
   std::map<std::string, TextureConfig> textures;
   std::string currentTextureId;
-  int currentFrame;
+  size_t currentFrame;
   float elapsedTime;
   bool inStandbyMode;
   int animationCycleCount;

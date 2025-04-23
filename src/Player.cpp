@@ -1,10 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(const std::string& id)
-  : Entity(id)
-{
-  initializeAnimations();
-}
+Player::Player(const std::string& id) : Entity(id) { initializeAnimations(); }
 
 void Player::update(float deltaTime)
 {
@@ -31,11 +27,10 @@ void Player::initializeAnimations()
   animationComponent.play(GameConfig::AnimationStates::IDLE);
 }
 
-
 void Player::handleInput()
 {
-  auto *animationComponent = getAnimationComponent();
-  if(!animationComponent)
+  auto* animationComponent = getAnimationComponent();
+  if (!animationComponent)
   {
     spdlog::error("Animation component not found");
     return;
@@ -44,13 +39,14 @@ void Player::handleInput()
   bool wasMoving = isMoving;
   isMoving = false;
 
-  if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
   {
     isMoving = true;
 
-    if(!wasMoving)
+    if (!wasMoving)
     {
-      if(animationComponent->getCurrentAnimationId() != GameConfig::AnimationStates::RUNNING)
+      if (animationComponent->getCurrentAnimationId() !=
+          GameConfig::AnimationStates::RUNNING)
       {
         animationComponent->play(GameConfig::AnimationStates::RUNNING);
       }
@@ -58,13 +54,13 @@ void Player::handleInput()
   }
   else
   {
-    if(wasMoving)
+    if (wasMoving)
     {
-      if(animationComponent->getCurrentAnimationId() != GameConfig::AnimationStates::IDLE)
+      if (animationComponent->getCurrentAnimationId() !=
+          GameConfig::AnimationStates::IDLE)
       {
         animationComponent->play(GameConfig::AnimationStates::IDLE);
       }
     }
   }
 }
-
