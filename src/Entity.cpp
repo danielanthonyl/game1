@@ -1,22 +1,20 @@
 #include "Entity.hpp"
 
-Entity::Entity(const std::string &id)
-  : id(id), position(0.0f, 0.0f)
-{
-}
+#include "SFML/Graphics/RenderTarget.hpp"
+
+Entity::Entity(const std::string& id) : id(id), position(0.0f, 0.0f) {}
 
 void Entity::update(float deltaTime)
 {
-  if(animationComponent)
+  if (animationComponent)
   {
     animationComponent->update(deltaTime);
   }
-
 }
 
 void Entity::draw(sf::RenderTarget& target)
 {
-  if(animationComponent)
+  if (animationComponent)
   {
     target.draw(animationComponent->getSprite());
   }
@@ -24,8 +22,7 @@ void Entity::draw(sf::RenderTarget& target)
 
 AnimationComponent& Entity::addAnimationComponent()
 {
-
-  if(!animationComponent)
+  if (!animationComponent)
   {
     animationComponent = std::make_unique<AnimationComponent>();
   }
@@ -33,17 +30,15 @@ AnimationComponent& Entity::addAnimationComponent()
   return *animationComponent;
 }
 
-
 // getters
-const std::string& Entity::getId() const
+const std::string& Entity::getId() const { return id; }
+
+InputContextComponent& Entity::getInputContextComponent()
 {
-  return id;
+  return inputContextComponent;
 }
 
-const sf::Vector2f& Entity::getPosition() const
-{
-  return position;
-}
+const sf::Vector2f& Entity::getPosition() const { return position; }
 
 AnimationComponent* Entity::getAnimationComponent()
 {
@@ -55,4 +50,3 @@ void Entity::setPosition(const sf::Vector2f& newPosition)
 {
   position = newPosition;
 }
-

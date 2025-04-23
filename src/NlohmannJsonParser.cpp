@@ -28,13 +28,14 @@ Animation::TextureData NlohmannJsonParser::parseTextureData(
 }
 
 InputContext::Context NlohmannJsonParser::parseInputContext(
-    const std::string& inputContextData)
+    const std::string& inputContextId)
 {
-  std::ifstream rawInputContext(inputContextData);
+  std::string inputContextPath = "./" + inputContextId + ".json";
+  std::ifstream rawInputContext(inputContextPath);
 
   if (!rawInputContext.is_open())
   {
-    throw std::runtime_error("Failed to open file: " + inputContextData);
+    throw std::runtime_error("Failed to open file: " + inputContextPath);
   }
 
   try
@@ -45,7 +46,7 @@ InputContext::Context NlohmannJsonParser::parseInputContext(
   }
   catch (const std::exception& e)
   {
-    throw std::runtime_error("Failed to parse file [" + inputContextData +
+    throw std::runtime_error("Failed to parse file [" + inputContextPath +
                              "]:\n" + e.what());
   }
 }

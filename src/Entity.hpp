@@ -1,16 +1,16 @@
 #pragma once
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include "SFML/Graphics.hpp"
 // DEBT!  dependency injection
 #include "AnimationComponent.hpp"
+#include "InputContextComponent.hpp"
 
 class Entity
 {
-public:
-  explicit Entity(const std::string &id);
+ public:
+  explicit Entity(const std::string& id);
 
   virtual void update(float deltaTime);
 
@@ -20,13 +20,16 @@ public:
 
   // getters/setters
   const std::string& getId() const;
-  const sf::Vector2f &getPosition() const;
+  const sf::Vector2f& getPosition() const;
   AnimationComponent* getAnimationComponent();
+  InputContextComponent& getInputContextComponent();
 
   void setPosition(const sf::Vector2f& newPosition);
 
-private:
+ private:
   std::string id;
   sf::Vector2f position;
+  // no need unique_ptr here
   std::unique_ptr<AnimationComponent> animationComponent;
+  InputContextComponent inputContextComponent;
 };

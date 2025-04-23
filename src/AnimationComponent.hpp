@@ -5,8 +5,8 @@
 #include <string>
 
 #include "AnimationData.hpp"
-#include "SFML/Graphics.hpp"
-#include "spdlog/spdlog.h"
+#include "SFML/Graphics/Sprite.hpp"
+#include "SFML/Graphics/Texture.hpp"
 
 class AnimationComponent
 {

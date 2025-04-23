@@ -1,5 +1,8 @@
 #include "AnimationComponent.hpp"
 
+#include "spdlog/spdlog.h"
+
+
 /**
  * DEBT! texture and animation names are being used interchangeably
  */

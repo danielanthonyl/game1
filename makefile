@@ -28,10 +28,10 @@ remove-out:
 clean:
 	make remove-obj && make remove-out
 
-compiledb
-compiledb make
+compiledb:
+	compiledb make
 
-create-format
-clang-format -style=LLVM -dump-config > .clang-format
+create-format:
+	clang-format -style=LLVM -dump-config > .clang-format
 
 rebuild: clean all remove-obj

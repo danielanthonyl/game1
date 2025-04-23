@@ -1,5 +1,7 @@
 #include "SpriteAnimator.hpp"
-#include <iostream>
+
+#include "spdlog/spdlog.h"
+
 
 /**
  * - support atlas texture
@@ -17,10 +19,8 @@ SpriteAnimator::SpriteAnimator()
 
 void SpriteAnimator::add(const sf::Texture &texture,
                          const Animation::TextureData &data,
-                         const State animationState,
-                         const int cycles,
-                         const int standbyFrame,
-                         const float frameTime,
+                         const State animationState, const int cycles,
+                         const int standbyFrame, const float frameTime,
                          std::function<void()> onEnterStandby)
 {
   AnimationConfig animation;
@@ -68,14 +68,16 @@ void SpriteAnimator::updateStandbyState()
 {
   StandbyConfig &standby = animations[currentState].standby;
 
-  if (standby.cyclesBeforeStandby != 0 && animationCycleCount >= standby.cyclesBeforeStandby)
+  if (standby.cyclesBeforeStandby != 0 &&
+      animationCycleCount >= standby.cyclesBeforeStandby)
   {
     inStandbyMode = true;
 
     AnimationConfig &animation = animations[currentState];
     currentFrame = standby.standbyFrame;
     Animation::Frame standbyFrame = animation.data.frames[currentFrame].frame;
-    sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y}, {standbyFrame.w, standbyFrame.h}));
+    sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y},
+                                      {standbyFrame.w, standbyFrame.h}));
 
     if (standby.onEnterStandby)
     {
@@ -86,18 +88,19 @@ void SpriteAnimator::updateStandbyState()
 
 void SpriteAnimator::play(const State animationState)
 {
-  spdlog::info("animation switching: {} -> {}", parseState(currentState), parseState(animationState));
+  spdlog::info("animation switching: {} -> {}", parseState(currentState),
+               parseState(animationState));
 
-    currentState = animationState;
-    currentFrame = 0;
-    elapsedTime = 0.0f;
-    inStandbyMode = false;
-    animationCycleCount = 0;
+  currentState = animationState;
+  currentFrame = 0;
+  elapsedTime = 0.0f;
+  inStandbyMode = false;
+  animationCycleCount = 0;
 
-    AnimationConfig &animation = animations[currentState];
-    sprite.setTexture(animation.texture);
+  AnimationConfig &animation = animations[currentState];
+  sprite.setTexture(animation.texture);
 
-    updateFrame();
+  updateFrame();
 }
 
 void SpriteAnimator::updateFrame()
@@ -107,20 +110,11 @@ void SpriteAnimator::updateFrame()
   sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w, frame.h}));
 }
 
-const State SpriteAnimator::getState() const
-{
-  return currentState;
-}
+State SpriteAnimator::getState() const { return currentState; }
 
-const sf::Sprite SpriteAnimator::getSprite() const
-{
-  return sprite;
-}
+const sf::Sprite SpriteAnimator::getSprite() const { return sprite; }
 
-bool SpriteAnimator::isInStandby() const
-{
-  return inStandbyMode;
-}
+bool SpriteAnimator::isInStandby() const { return inStandbyMode; }
 
 void SpriteAnimator::exitStandby()
 {

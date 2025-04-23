@@ -9,5 +9,6 @@ class NlohmannJsonParser : public JsonParser
   Animation::TextureData parseTextureData(
       const std::string& textureDataPath) override;
 
-  InputContext::Context parseInputContext(const std::string& InputContextPath);
+  static InputContext::Context parseInputContext(
+      const std::string& inputContextId);
 };

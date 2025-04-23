@@ -1,6 +1,16 @@
 #include "Player.hpp"
 
-Player::Player(const std::string& id) : Entity(id) { initializeAnimations(); }
+#include "GameConfig.hpp"
+#include "InputContextComponent.hpp"
+#include "ResourceManager.hpp"
+#include "SFMLKeyMap.hpp"
+#include "spdlog/spdlog.h"
+
+Player::Player(const std::string& id) : Entity(id)
+{
+  initializeAnimations();
+  getInputContextComponent().addContext("player-barefoot-icc");
+}
 
 void Player::update(float deltaTime)
 {
@@ -29,7 +39,12 @@ void Player::initializeAnimations()
 
 void Player::handleInput()
 {
+  /* i think thi has to go out of here. it's called at every frame.*/
   auto* animationComponent = getAnimationComponent();
+  InputContextComponent inputContextComponent = getInputContextComponent();
+  InputContext::Action action = inputContextComponent.getAction("forward");
+  sf::Keyboard::Key forwardKey = SFMLKeyMap::toKey(action.key);
+
   if (!animationComponent)
   {
     spdlog::error("Animation component not found");
@@ -39,7 +54,7 @@ void Player::handleInput()
   bool wasMoving = isMoving;
   isMoving = false;
 
-  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+  if (sf::Keyboard::isKeyPressed(forwardKey))
   {
     isMoving = true;
 

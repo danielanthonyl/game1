@@ -1,8 +1,8 @@
 #pragma once
 
-#include "SFML/Graphics.hpp"
 #include "AnimationData.hpp"
-#include "spdlog/spdlog.h"
+#include "SFML/Graphics/Sprite.hpp"
+#include "SFML/Graphics/Texture.hpp"
 
 enum class State
 {
@@ -11,38 +11,35 @@ enum class State
 };
 
 static std::map<State, std::string> StateToString = {
-    {State::IDLE, "IDLE"},
-    {State::RUNNING, "RUNNING"}};
+    {State::IDLE, "IDLE"}, {State::RUNNING, "RUNNING"}};
 
 class SpriteAnimator
 {
-public:
+ public:
   SpriteAnimator();
 
-  void add(const sf::Texture &texture,
-           const Animation::TextureData &data,
-           const State animationState,
-           const int cycles = 0,
-           const int standbyFrame = 0,
-           float frameTime = 0.1f,
+  void add(const sf::Texture &texture, const Animation::TextureData &data,
+           const State animationState, const int cycles = 0,
+           const int standbyFrame = 0, float frameTime = 0.1f,
            std::function<void()> onEnterStandby = nullptr);
 
   void update(const float &deltaTime);
   void play(const State animationState);
 
-  const State getState() const;
+  State getState() const;
   const sf::Sprite getSprite() const;
 
   bool isInStandby() const;
   void exitStandby();
 
-private:
+ private:
   void updateFrame();
   void updateStandbyState();
   std::string parseState(State animationState);
   sf::Texture defaultTexture;
 
-  struct StandbyConfig {
+  struct StandbyConfig
+  {
     int cyclesBeforeStandby = 0;
     int standbyFrame = 0;
     std::function<void()> onEnterStandby = nullptr;
@@ -53,8 +50,8 @@ private:
     sf::Texture texture;
     Animation::TextureData data;
 
-    //DEBT! later on all of these should go inside "data"
-    // but still needs to update the json file standard
+    // DEBT! later on all of these should go inside "data"
+    //  but still needs to update the json file standard
     StandbyConfig standby;
     float frameTime;
   };
