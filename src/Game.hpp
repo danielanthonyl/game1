@@ -3,16 +3,17 @@
 #include <memory>
 #include <optional>
 
-//DEBT! dependency injection
-#include "ResourceManager.hpp"
-#include "GameConfig.hpp"
-#include "spdlog/spdlog.h"
-#include "SFML/Graphics.hpp"
+// DEBT! dependency injection
 #include "Entity.hpp"
+#include "GameConfig.hpp"
+#include "InputManager.hpp"
+#include "ResourceManager.hpp"
+#include "SFML/Graphics.hpp"
+#include "spdlog/spdlog.h"
 
-class Game
-{
-public:
+
+class Game {
+ public:
   Game(const std::string& title, unsigned int width, unsigned int height);
 
   void initialize();
@@ -21,9 +22,9 @@ public:
   Entity& addEntity(std::unique_ptr<Entity> entity);
 
   /* Getters */
-  Entity *getEntity(const std::string &entityId);
+  Entity* getEntity(const std::string& entityId);
 
-private:
+ private:
   void render();
   void update(float deltaTime);
   void processEvents();

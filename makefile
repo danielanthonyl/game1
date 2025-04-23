@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -Wpedantic -Wmissing-include-dirs -Wunused-includes -std=c++17 -I./include -g -Og
+CXXFLAGS = -Wall -Wextra -Wpedantic -Wmissing-include-dirs -Wunused-value -std=c++17 -I./include -g -Og
 
 LDFLAGS = -L./libs/SFML/lib
 LDLIBS = -lsfml-graphics -lsfml-window -lsfml-system
