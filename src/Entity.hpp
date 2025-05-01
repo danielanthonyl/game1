@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
 // DEBT!  dependency injection
@@ -24,12 +23,14 @@ class Entity
   AnimationComponent* getAnimationComponent();
   InputContextComponent& getInputContextComponent();
 
+  AnimationComponent& getAsd();
+
   void setPosition(const sf::Vector2f& newPosition);
 
  private:
   std::string id;
   sf::Vector2f position;
-  // no need unique_ptr here
   std::unique_ptr<AnimationComponent> animationComponent;
   InputContextComponent inputContextComponent;
+  AnimationComponent asd;
 };

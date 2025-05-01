@@ -30,6 +30,8 @@ AnimationComponent& Entity::addAnimationComponent()
   return *animationComponent;
 }
 
+AnimationComponent& Entity::getAsd() { return asd; }
+
 // getters
 const std::string& Entity::getId() const { return id; }
 

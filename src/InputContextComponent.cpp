@@ -28,6 +28,5 @@ InputContext::Action InputContextComponent::getAction(
     return *it;
   }
 
-  // spdlog::warn("no action found for id {}", actionId);
   return InputContext::Action();
 }

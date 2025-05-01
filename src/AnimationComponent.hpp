@@ -55,7 +55,9 @@ class AnimationComponent
   void updateStandbyState();
 
   // getters
-  sf::Sprite getSprite() const;
+  sf::Sprite &getSprite();
+  const sf::Sprite &getSprite() const;
+
   std::string getCurrentAnimationId() const;
 
  private:

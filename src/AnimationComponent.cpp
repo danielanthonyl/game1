@@ -2,14 +2,13 @@
 
 #include "spdlog/spdlog.h"
 
-
 /**
  * DEBT! texture and animation names are being used interchangeably
  */
 
-AnimationComponent::AnimationComponent()
-    : sprite(defaultTexture), defaultTexture(sf::Vector2u(1, 1))
+AnimationComponent::AnimationComponent() : sprite(defaultTexture)
 {
+  sprite.setTexture(defaultTexture);
   sprite.scale({5.0f, 5.0f});
 }
 
@@ -146,6 +145,7 @@ void AnimationComponent::updateStandbyState()
     {
       Animation::Frame standbyFrame =
           currentAnimation.textureData->frames[currentFrame].frame;
+
       sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y},
                                         {standbyFrame.w, standbyFrame.h}));
     }
@@ -158,7 +158,8 @@ void AnimationComponent::updateStandbyState()
 }
 
 /* Getters */
-sf::Sprite AnimationComponent::getSprite() const { return sprite; }
+sf::Sprite &AnimationComponent::getSprite() { return sprite; }
+const sf::Sprite &AnimationComponent::getSprite() const { return sprite; }
 
 std::string AnimationComponent::getCurrentAnimationId() const
 {

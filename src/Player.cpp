@@ -39,15 +39,17 @@ void Player::initializeAnimations()
 
 void Player::handleInput()
 {
-  /* i think thi has to go out of here. it's called at every frame.*/
+  /* i think this has to go out of here. it's called at every frame.*/
   auto* animationComponent = getAnimationComponent();
   InputContextComponent inputContextComponent = getInputContextComponent();
   InputContext::Action action = inputContextComponent.getAction("forward");
   sf::Keyboard::Key forwardKey = SFMLKeyMap::toKey(action.key);
 
+  AnimationComponent asd = getAsd();
+
   if (!animationComponent)
   {
-    spdlog::error("Animation component not found");
+    spdlog::info("no animation component found");
     return;
   }
 
@@ -60,12 +62,13 @@ void Player::handleInput()
 
     if (!wasMoving)
     {
-      if (animationComponent->getCurrentAnimationId() !=
-          GameConfig::AnimationStates::RUNNING)
+      if (asd.getCurrentAnimationId() != GameConfig::AnimationStates::RUNNING)
       {
         animationComponent->play(GameConfig::AnimationStates::RUNNING);
       }
     }
+
+    animationComponent->getSprite().move(sf::Vector2f(3.0f, 0.0f));
   }
   else
   {
