@@ -17,6 +17,7 @@ int main()
   game.initialize();
 
   auto player = std::make_unique<Player>("player1");
+  player->initialize();
   game.addEntity(std::move(player));
 
   game.run();

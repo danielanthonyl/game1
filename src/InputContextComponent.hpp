@@ -8,21 +8,20 @@ class InputContextComponent
   InputContextComponent();
 
   /**
-   * @brief swaps contexts.
+   * @brief add and swaps contexts.
    * maybe in the future when multiple contexts are implemented,
    * a "switch context" will be more appropriate
    */
-  void addContext(const std::string& context);
+  void bindContext(const std::string& context);
+  void bindAction(const InputContext::ActionHandler& actionHandler);
 
+  // getters
   const InputContext::Context& getActiveContext() const;
-
-  /**
-   * @brief maybe in the future it can encapsulate the SFMLKeyMap
-   * and add to the action a specific key like, sf::Keyboard::Key sfmlKey;
-   */
-  InputContext::Action getAction(const std::string& actionId) const;
+  const std::vector<InputContext::ActionHandler>& getActionHandlers() const;
+  const InputContext::Action* getAction(const std::string& actionId) const;
 
  private:
   InputContext::Context activeContext;
-  InputContext::Action action;
+  std::string activeContextId;
+  std::vector<InputContext::ActionHandler> actionHandlers;
 };

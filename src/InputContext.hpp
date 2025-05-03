@@ -16,6 +16,12 @@ struct Action
 
 using Context = std::vector<Action>;
 
+struct ActionHandler
+{
+  InputContext::Action action;
+  std::function<void()> actionCallback;
+};
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Action, type, id, key);
 
 };  // namespace InputContext

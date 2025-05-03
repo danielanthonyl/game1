@@ -1,6 +1,8 @@
 #include "Player.hpp"
 
+#include "AnimationComponent.hpp"
 #include "GameConfig.hpp"
+#include "InputContext.hpp"
 #include "InputContextComponent.hpp"
 #include "ResourceManager.hpp"
 #include "SFMLKeyMap.hpp"
@@ -9,7 +11,24 @@
 Player::Player(const std::string& id) : Entity(id)
 {
   initializeAnimations();
-  getInputContextComponent().addContext("player-barefoot-icc");
+  getInputContextComponent().bindContext("player-barefoot-icc");
+}
+
+void Player::setupPlayerComponent()
+{
+  InputContextComponent& inputContextComponent = getInputContextComponent();
+
+  const InputContext::Action* action =
+      inputContextComponent.getAction("forward");
+
+  if (!action)
+  {
+    spdlog::error("error getting action 'forward'");
+    return;
+  }
+
+  inputContextComponent.bindAction(InputContext::ActionHandler{
+      *action, std::bind(&Player::moveForward, this)});
 }
 
 void Player::update(float deltaTime)
@@ -20,7 +39,7 @@ void Player::update(float deltaTime)
 
 void Player::initializeAnimations()
 {
-  auto& animationComponent = addAnimationComponent();
+  AnimationComponent& animationComponent = getAnimationComponent();
   auto& resourceManager = ResourceManager::getInstance();
 
   animationComponent.addAnimation(
@@ -32,26 +51,22 @@ void Player::initializeAnimations()
       GameConfig::AnimationStates::RUNNING,
       &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_RUNNING),
       &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_RUNNING));
-
-  /* maybe we dont need this because the other function already has it */
-  animationComponent.play(GameConfig::AnimationStates::IDLE);
 }
 
 void Player::handleInput()
 {
-  /* i think this has to go out of here. it's called at every frame.*/
-  auto* animationComponent = getAnimationComponent();
-  InputContextComponent inputContextComponent = getInputContextComponent();
-  InputContext::Action action = inputContextComponent.getAction("forward");
-  sf::Keyboard::Key forwardKey = SFMLKeyMap::toKey(action.key);
+  AnimationComponent& animationComponent = getAnimationComponent();
+  InputContextComponent& inputContextComponent = getInputContextComponent();
+  const InputContext::Action* action =
+      inputContextComponent.getAction("forward");
 
-  AnimationComponent asd = getAsd();
-
-  if (!animationComponent)
+  if (!action)
   {
-    spdlog::info("no animation component found");
+    spdlog::error("Action component not found.");
     return;
   }
+
+  sf::Keyboard::Key forwardKey = SFMLKeyMap::toKey(action->key);
 
   bool wasMoving = isMoving;
   isMoving = false;
@@ -62,23 +77,31 @@ void Player::handleInput()
 
     if (!wasMoving)
     {
-      if (asd.getCurrentAnimationId() != GameConfig::AnimationStates::RUNNING)
+      if (animationComponent.getCurrentAnimationId() !=
+          GameConfig::AnimationStates::RUNNING)
       {
-        animationComponent->play(GameConfig::AnimationStates::RUNNING);
+        animationComponent.play(GameConfig::AnimationStates::RUNNING);
       }
     }
-
-    animationComponent->getSprite().move(sf::Vector2f(3.0f, 0.0f));
   }
   else
   {
     if (wasMoving)
     {
-      if (animationComponent->getCurrentAnimationId() !=
+      if (animationComponent.getCurrentAnimationId() !=
           GameConfig::AnimationStates::IDLE)
       {
-        animationComponent->play(GameConfig::AnimationStates::IDLE);
+        animationComponent.play(GameConfig::AnimationStates::IDLE);
       }
     }
   }
+}
+
+void Player::moveForward()
+{
+  spdlog::info("handling forward movement");
+
+  AnimationComponent& animationComponent = getAnimationComponent();
+  // animation component.move? this is wrong. entity should own sprite.
+  animationComponent.getSprite().move(sf::Vector2f(3.0f, 0.0f));
 }

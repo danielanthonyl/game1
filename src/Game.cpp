@@ -1,23 +1,24 @@
 #include "Game.hpp"
 
 Game::Game(const std::string& title, unsigned int width, unsigned int height)
-  : window(sf::VideoMode({width, height}), title)
+    : window(sf::VideoMode({width, height}), title)
 {
-
   window.setFramerateLimit(60);
 }
 
 void Game::initialize()
 {
-  auto &resourceManager = ResourceManager::getInstance();
+  auto& resourceManager = ResourceManager::getInstance();
 
-  resourceManager.loadTextureAsset(GameConfig::ResourceIds::PLAYER_IDLE,
-                                   GameConfig::ResourcePaths::PLAYER_IDLE_TEXTURE,
-                                   GameConfig::ResourcePaths::PLAYER_IDLE_TEXTURE_DATA);
+  resourceManager.loadTextureAsset(
+      GameConfig::ResourceIds::PLAYER_IDLE,
+      GameConfig::ResourcePaths::PLAYER_IDLE_TEXTURE,
+      GameConfig::ResourcePaths::PLAYER_IDLE_TEXTURE_DATA);
 
-  resourceManager.loadTextureAsset(GameConfig::ResourceIds::PLAYER_RUNNING,
-                                   GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE,
-                                   GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE_DATA);
+  resourceManager.loadTextureAsset(
+      GameConfig::ResourceIds::PLAYER_RUNNING,
+      GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE,
+      GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE_DATA);
 
   spdlog::info("Game initialized.");
 }
@@ -26,7 +27,7 @@ void Game::run()
 {
   running = true;
 
-  while(running && window.isOpen())
+  while (running && window.isOpen())
   {
     processEvents();
 
@@ -41,7 +42,7 @@ void Game::processEvents()
 {
   while (const std::optional event = window.pollEvent())
   {
-    if(event->is<sf::Event::Closed>())
+    if (event->is<sf::Event::Closed>())
     {
       window.close();
       running = false;
@@ -79,7 +80,7 @@ Entity& Game::addEntity(std::unique_ptr<Entity> entity)
 /* Getters */
 Entity* Game::getEntity(const std::string& entityId)
 {
-  for(auto& entity : entities)
+  for (auto& entity : entities)
   {
     if (entity->getId() == entityId)
     {
