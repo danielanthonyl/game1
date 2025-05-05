@@ -1,53 +1,46 @@
 #include "Entity.hpp"
 
-Entity::Entity(const std::string &id)
-  : id(id), position(0.0f, 0.0f)
+#include "SFML/Graphics/RenderTarget.hpp"
+#include "spdlog/spdlog.h"
+
+Entity::Entity(const std::string& id) : id(id), position(0.0f, 0.0f) {}
+
+void Entity::initialize() { setupPlayerComponent(); }
+
+void Entity::setupPlayerComponent()
 {
+  spdlog::info("no actions or contexts bound to entity");
 }
 
 void Entity::update(float deltaTime)
 {
-  if(animationComponent)
-  {
-    animationComponent->update(deltaTime);
-  }
-
+  animationComponent.update(deltaTime);
+  controllerComponent.handleInput(*this);
 }
 
 void Entity::draw(sf::RenderTarget& target)
 {
-  if(animationComponent)
-  {
-    target.draw(animationComponent->getSprite());
-  }
+  target.draw(animationComponent.getSprite());
 }
-
-AnimationComponent& Entity::addAnimationComponent()
-{
-
-  if(!animationComponent)
-  {
-    animationComponent = std::make_unique<AnimationComponent>();
-  }
-
-  return *animationComponent;
-}
-
 
 // getters
-const std::string& Entity::getId() const
+const std::string& Entity::getId() const { return id; }
+
+InputContextComponent& Entity::getInputContextComponent()
 {
-  return id;
+  return inputContextComponent;
 }
 
-const sf::Vector2f& Entity::getPosition() const
+const sf::Vector2f& Entity::getPosition() const { return position; }
+
+AnimationComponent& Entity::getAnimationComponent()
 {
-  return position;
+  return animationComponent;
 }
 
-AnimationComponent* Entity::getAnimationComponent()
+ControllerComponent& Entity::getControllerComponent()
 {
-  return animationComponent.get();
+  return controllerComponent;
 }
 
 // setters
@@ -55,4 +48,3 @@ void Entity::setPosition(const sf::Vector2f& newPosition)
 {
   position = newPosition;
 }
-

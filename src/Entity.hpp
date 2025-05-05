@@ -1,32 +1,40 @@
 #pragma once
 
 #include <string>
-#include <memory>
 
-#include "SFML/Graphics.hpp"
-// DEBT!  dependency injection
+// DEBT!  dependency injection. maybe use forward declaraction.
 #include "AnimationComponent.hpp"
+#include "ControllerComponent.hpp"
+#include "InputContextComponent.hpp"
+#include "SFML/Graphics/RenderTarget.hpp"
 
 class Entity
 {
-public:
-  explicit Entity(const std::string &id);
+ public:
+  explicit Entity(const std::string& id);
+
+  void initialize();
 
   virtual void update(float deltaTime);
 
   virtual void draw(sf::RenderTarget& target);
 
-  AnimationComponent& addAnimationComponent();
-
   // getters/setters
   const std::string& getId() const;
-  const sf::Vector2f &getPosition() const;
-  AnimationComponent* getAnimationComponent();
+  const sf::Vector2f& getPosition() const;
+  AnimationComponent& getAnimationComponent();
+  InputContextComponent& getInputContextComponent();
+  ControllerComponent& getControllerComponent();
 
   void setPosition(const sf::Vector2f& newPosition);
 
-private:
+ private:
   std::string id;
   sf::Vector2f position;
-  std::unique_ptr<AnimationComponent> animationComponent;
+  AnimationComponent animationComponent;
+  InputContextComponent inputContextComponent;
+  ControllerComponent controllerComponent;
+
+ protected:
+  virtual void setupPlayerComponent();
 };

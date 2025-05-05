@@ -1,14 +1,11 @@
 #pragma once
 
-#include "SFML/Graphics.hpp"
 #include "AnimationData.hpp"
-#include "spdlog/spdlog.h"
-#include "JsonParser.hpp"
-#include <memory>
+#include "SFML/Graphics/Texture.hpp"
 
 class ResourceManager
 {
-public:
+ public:
   explicit ResourceManager();
 
   /**
@@ -18,10 +15,8 @@ public:
    * @param textureDataPath file path to the texture data file (json)
    * @return bool True if loading was successful
    */
-  bool loadTextureAsset(const std::string id,
-                        const std::string texturePath,
+  bool loadTextureAsset(const std::string id, const std::string texturePath,
                         const std::string textureDataPath);
-
 
   /**
    * @brief Load texture data from file
@@ -29,8 +24,7 @@ public:
    * @param textureDataPath file path to the texture file
    * @return bool True if loading was succesful
    */
-  bool loadTextureData(const std::string id,
-                       const std::string textureDataPath);
+  bool loadTextureData(const std::string id, const std::string textureDataPath);
 
   /**
    * @brief Load texture data from file
@@ -38,15 +32,15 @@ public:
    * @param texturePath file path to the texture file
    * @return bool True if loading was succesful
    */
-  bool loadTexture(const std::string id,
-                   const std::string texturePath);
+  bool loadTexture(const std::string id, const std::string texturePath);
 
   /* getters */
   static ResourceManager& getInstance();
   const sf::Texture& getTexture(const std::string& textureId) const;
-  const Animation::TextureData& getTextureData(const std::string& textureDataId) const;
+  const Animation::TextureData& getTextureData(
+      const std::string& textureDataId) const;
 
-private:
+ private:
   std::map<std::string, sf::Texture> textures;
   std::map<std::string, Animation::TextureData> texturesDatas;
 

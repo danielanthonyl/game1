@@ -1,20 +1,21 @@
 #include "AnimationComponent.hpp"
 
+#include "spdlog/spdlog.h"
+
 /**
  * DEBT! texture and animation names are being used interchangeably
  */
 
-AnimationComponent::AnimationComponent()
-    : defaultTexture(sf::Vector2u(1, 1)), sprite(defaultTexture)
+AnimationComponent::AnimationComponent() : sprite(defaultTexture)
 {
+  sprite.setTexture(defaultTexture);
   sprite.scale({5.0f, 5.0f});
 }
 
 void AnimationComponent::addAnimation(const std::string &textureId,
                                       const sf::Texture *texture,
                                       const Animation::TextureData *textureData,
-                                      const int cycles,
-                                      const int standbyFrame,
+                                      const int cycles, const int standbyFrame,
                                       const float frameTime,
                                       std::function<void()> onEnterStandby)
 {
@@ -75,7 +76,8 @@ void AnimationComponent::updateFrame()
 
   if (currentFrame < currentAnimation.textureData->frames.size())
   {
-    Animation::Frame frame = currentAnimation.textureData->frames[currentFrame].frame;
+    Animation::Frame frame =
+        currentAnimation.textureData->frames[currentFrame].frame;
     sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w, frame.h}));
   }
 }
@@ -106,7 +108,8 @@ void AnimationComponent::update(float deltaTime)
     size_t lastFrame = currentAnimation.textureData->frames.size() - 1;
     bool wasLastFrame = (currentFrame == lastFrame);
 
-    currentFrame = (currentFrame + 1) % currentAnimation.textureData->frames.size();
+    currentFrame =
+        (currentFrame + 1) % currentAnimation.textureData->frames.size();
     updateFrame();
 
     if (wasLastFrame)
@@ -122,14 +125,16 @@ void AnimationComponent::updateStandbyState()
   auto it = textures.find(currentTextureId);
   if (it == textures.end())
   {
-    spdlog::error("invalid animation '{}' for standby update", currentTextureId);
+    spdlog::error("invalid animation '{}' for standby update",
+                  currentTextureId);
     ;
     return;
   }
 
   StandbyConfig &standby = it->second.standby;
 
-  if (standby.cyclesBeforeStandby != 0 && animationCycleCount >= standby.cyclesBeforeStandby)
+  if (standby.cyclesBeforeStandby != 0 &&
+      animationCycleCount >= standby.cyclesBeforeStandby)
   {
     inStandbyMode = true;
 
@@ -138,8 +143,11 @@ void AnimationComponent::updateStandbyState()
 
     if (currentFrame < currentAnimation.textureData->frames.size())
     {
-      Animation::Frame standbyFrame = currentAnimation.textureData->frames[currentFrame].frame;
-      sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y}, {standbyFrame.w, standbyFrame.h}));
+      Animation::Frame standbyFrame =
+          currentAnimation.textureData->frames[currentFrame].frame;
+
+      sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y},
+                                        {standbyFrame.w, standbyFrame.h}));
     }
 
     if (standby.onEnterStandby)
@@ -150,10 +158,8 @@ void AnimationComponent::updateStandbyState()
 }
 
 /* Getters */
-sf::Sprite AnimationComponent::getSprite() const
-{
-  return sprite;
-}
+sf::Sprite &AnimationComponent::getSprite() { return sprite; }
+const sf::Sprite &AnimationComponent::getSprite() const { return sprite; }
 
 std::string AnimationComponent::getCurrentAnimationId() const
 {

@@ -1,11 +1,11 @@
 #include "ResourceManager.hpp"
 
+#include "spdlog/spdlog.h"
+
 // DEBT! Dependency injection
 #include "NlohmannJsonParser.hpp"
 
-ResourceManager::ResourceManager()
-{
-}
+ResourceManager::ResourceManager() {}
 
 ResourceManager &ResourceManager::getInstance()
 {
@@ -13,7 +13,8 @@ ResourceManager &ResourceManager::getInstance()
   return instance;
 }
 
-bool ResourceManager::loadTexture(const std::string id, const std::string texturePath)
+bool ResourceManager::loadTexture(const std::string id,
+                                  const std::string texturePath)
 {
   if (textures.find(id) != textures.end())
   {
@@ -34,7 +35,8 @@ bool ResourceManager::loadTexture(const std::string id, const std::string textur
   return true;
 }
 
-bool ResourceManager::loadTextureData(const std::string id, const std::string textureDataPath)
+bool ResourceManager::loadTextureData(const std::string id,
+                                      const std::string textureDataPath)
 {
   if (texturesDatas.find(id) != texturesDatas.end())
   {
@@ -42,7 +44,8 @@ bool ResourceManager::loadTextureData(const std::string id, const std::string te
     return true;
   }
 
-  Animation::TextureData textureData = NlohmannJsonParser().parseTextureData(textureDataPath);
+  Animation::TextureData textureData =
+      NlohmannJsonParser().parseTextureData(textureDataPath);
 
   if (textureData.frames.empty())
   {
@@ -56,7 +59,8 @@ bool ResourceManager::loadTextureData(const std::string id, const std::string te
   return true;
 }
 
-bool ResourceManager::loadTextureAsset(std::string id, std::string texturePath, std::string textureDataPath)
+bool ResourceManager::loadTextureAsset(std::string id, std::string texturePath,
+                                       std::string textureDataPath)
 {
   bool textureLoaded = loadTexture(id, texturePath);
   bool textureDataLoaded = loadTextureData(id, textureDataPath);
@@ -66,7 +70,8 @@ bool ResourceManager::loadTextureAsset(std::string id, std::string texturePath, 
 
 /* Getters */
 
-const sf::Texture &ResourceManager::getTexture(const std::string &textureId) const
+const sf::Texture &ResourceManager::getTexture(
+    const std::string &textureId) const
 {
   auto it = textures.find(textureId);
 
@@ -79,7 +84,8 @@ const sf::Texture &ResourceManager::getTexture(const std::string &textureId) con
   return defaultTexture;
 }
 
-const Animation::TextureData &ResourceManager::getTextureData(const std::string &textureDataId) const
+const Animation::TextureData &ResourceManager::getTextureData(
+    const std::string &textureDataId) const
 {
   auto it = texturesDatas.find(textureDataId);
 
@@ -88,6 +94,7 @@ const Animation::TextureData &ResourceManager::getTextureData(const std::string 
     return it->second;
   }
 
-  spdlog::warn("Texture data {} not found. Returning default texture data", textureDataId);
+  spdlog::warn("Texture data {} not found. Returning default texture data",
+               textureDataId);
   return defaultTextureData;
 }
