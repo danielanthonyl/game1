@@ -3,7 +3,7 @@
 #include <string>
 
 // DEBT!  dependency injection. maybe use forward declaraction.
-#include "AnimationComponent.hpp"
+#include "Components/AnimationComponent.hpp"
 #include "ControllerComponent.hpp"
 #include "InputContextComponent.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"

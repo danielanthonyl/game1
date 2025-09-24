@@ -1,3 +1,8 @@
+build/
+bin/
+include/
+libs/*
+
 # IDE and build system files
 .cache/
 .vscode/
@@ -15,9 +20,6 @@ obj/
 **/*.ilk
 **/*.exp
 **/*.lib
-
-# Dependency directories
-libs/
 
 # Logs and temporary files
 **/*.log

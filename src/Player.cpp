@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-#include "AnimationComponent.hpp"
+#include "Components/AnimationComponent.hpp"
 #include "GameConfig.hpp"
 #include "InputContext.hpp"
 #include "InputContextComponent.hpp"
