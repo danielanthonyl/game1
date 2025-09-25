@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 4.0.1)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=*")
+
 project(game1 VERSION 0.0.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 file(GLOB_RECURSE SOURCES src/*.cpp)
-
 add_executable(game1 ${SOURCES})
 
 target_compile_options(game1 PRIVATE /utf-8)

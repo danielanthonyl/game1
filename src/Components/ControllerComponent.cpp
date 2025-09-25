@@ -1,9 +1,9 @@
 #include "ControllerComponent.hpp"
 
-#include "Entity.hpp"
-#include "InputContext.hpp"
+#include "../Entity.hpp"
+#include "../InputContext.hpp"
 #include "SFML/Window/Keyboard.hpp"
-#include "SFMLKeyMap.hpp"
+#include "../SFMLKeyMap.hpp"
 
 void ControllerComponent::handleInput(Entity& entity)
 {

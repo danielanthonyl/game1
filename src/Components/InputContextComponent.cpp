@@ -1,6 +1,6 @@
 #include "InputContextComponent.hpp"
 
-#include "NlohmannJsonParser.hpp"
+#include "../NlohmannJsonParser.hpp"
 #include "spdlog/spdlog.h"
 
 InputContextComponent::InputContextComponent() {}

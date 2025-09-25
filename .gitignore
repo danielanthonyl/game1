@@ -1,7 +1,8 @@
 build/
 bin/
-include/
-libs/*
+include
+libs
+resources/
 
 # IDE and build system files
 .cache/

@@ -3,7 +3,7 @@
 #include "Components/AnimationComponent.hpp"
 #include "GameConfig.hpp"
 #include "InputContext.hpp"
-#include "InputContextComponent.hpp"
+#include "Components/InputContextComponent.hpp"
 #include "ResourceManager.hpp"
 #include "SFMLKeyMap.hpp"
 #include "spdlog/spdlog.h"
@@ -53,6 +53,7 @@ void Player::initializeAnimations()
       &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_RUNNING));
 }
 
+[[deprecated("Use input context component bindAction instead")]]
 void Player::handleInput()
 {
   AnimationComponent& animationComponent = getAnimationComponent();

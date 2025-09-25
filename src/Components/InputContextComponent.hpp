@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputContext.hpp"
+#include "../InputContext.hpp"
 
 class InputContextComponent
 {

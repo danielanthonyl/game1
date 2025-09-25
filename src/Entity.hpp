@@ -4,8 +4,8 @@
 
 // DEBT!  dependency injection. maybe use forward declaraction.
 #include "Components/AnimationComponent.hpp"
-#include "ControllerComponent.hpp"
-#include "InputContextComponent.hpp"
+#include "Components/ControllerComponent.hpp"
+#include "Components/InputContextComponent.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"
 
 class Entity
