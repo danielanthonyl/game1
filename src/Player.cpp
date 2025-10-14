@@ -33,24 +33,34 @@ void Player::setupPlayerComponent()
 
 void Player::update(float deltaTime)
 {
-  handleInput();
+  // handleInput();
   Entity::update(deltaTime);
 }
 
 void Player::initializeAnimations()
 {
+
   AnimationComponent& animationComponent = getAnimationComponent();
-  auto& resourceManager = ResourceManager::getInstance();
+  animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
+  // auto& resourceManager = ResourceManager::getInstance();
 
-  animationComponent.addAnimation(
-      GameConfig::AnimationStates::IDLE,
-      &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_IDLE),
-      &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_IDLE));
+  // /*
+  // * addAnimation will take only the Enum (PLAYER_IDLE)
+  // * and animation component wil handle
+  // * the heavy lifting.
+  // *
+  // * maybe entity will actually have methods and stuff to deal with animationComponent.
+  // * gotta think of a way that animationComponent and enitty can deal with sprite.
+  // */
+  // animationComponent.addAnimation(
+  //     GameConfig::AnimationStates::IDLE,
+  //     &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_IDLE),
+  //     &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_IDLE));
 
-  animationComponent.addAnimation(
-      GameConfig::AnimationStates::RUNNING,
-      &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_RUNNING),
-      &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_RUNNING));
+  // animationComponent.addAnimation(
+  //     GameConfig::AnimationStates::RUNNING,
+  //     &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_RUNNING),
+  //     &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_RUNNING));
 }
 
 [[deprecated("Use input context component bindAction instead")]]
@@ -102,7 +112,7 @@ void Player::moveForward()
 {
   spdlog::info("handling forward movement");
 
-  AnimationComponent& animationComponent = getAnimationComponent();
+  // AnimationComponent& animationComponent = getAnimationComponent();
   // animation component.move? this is wrong. entity should own sprite.
-  animationComponent.getSprite().move(sf::Vector2f(3.0f, 0.0f));
+  // animationComponent.getSprite().move(sf::Vector2f(3.0f, 0.0f));
 }

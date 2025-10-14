@@ -3,6 +3,7 @@ bin/
 include
 libs
 resources/
+*.code-workspace
 
 # IDE and build system files
 .cache/

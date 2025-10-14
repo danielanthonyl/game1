@@ -5,12 +5,13 @@
 #include <string>
 
 #include "../AnimationData.hpp"
-#include "SFML/Graphics/Sprite.hpp"
-#include "SFML/Graphics/Texture.hpp"
+#include "../ResourceManager.hpp"
 
 class AnimationComponent
 {
  public:
+  AnimationComponent();
+
   struct StandbyConfig
   {
     int cyclesBeforeStandby = 0;
@@ -27,7 +28,7 @@ class AnimationComponent
     float frameTime = 0.01f;
   };
 
-  AnimationComponent();
+  void addAnimation(const std::string& textureId);
 
   /**
    * @brief Add an animation
@@ -54,17 +55,17 @@ class AnimationComponent
   void update(float deltaTime);
   void updateStandbyState();
 
-  // getters
-  sf::Sprite &getSprite();
-  const sf::Sprite &getSprite() const;
+  void setAnimation(const std::string textureId);
+
+  const sf::Texture &getCurrentTexture();
+  const sf::IntRect getCurrentFrameRect() const;
 
   std::string getCurrentAnimationId() const;
 
  private:
   void updateFrame();
 
-  sf::Texture defaultTexture;
-  sf::Sprite sprite;
+  ResourceManager& resourceManager;
   std::map<std::string, TextureConfig> textures;
   std::string currentTextureId;
   size_t currentFrame;

@@ -3,7 +3,14 @@
 #include "SFML/Graphics/RenderTarget.hpp"
 #include "spdlog/spdlog.h"
 
-Entity::Entity(const std::string& id) : id(id), position(0.0f, 0.0f) {}
+Entity::Entity(const std::string& id)
+    : id(id), position(0.0f, 0.0f), sprite(defaultTexture)
+{
+  sprite.setTexture(defaultTexture);
+
+  //DEBT! debug
+  sprite.scale({5.0f, 5.0f});
+}
 
 void Entity::initialize() { setupPlayerComponent(); }
 
@@ -15,12 +22,16 @@ void Entity::setupPlayerComponent()
 void Entity::update(float deltaTime)
 {
   animationComponent.update(deltaTime);
+
+  sprite.setTexture(animationComponent.getCurrentTexture());
+  sprite.setTextureRect(animationComponent.getCurrentFrameRect());
+
   controllerComponent.handleInput(*this);
 }
 
 void Entity::draw(sf::RenderTarget& target)
 {
-  target.draw(animationComponent.getSprite());
+  target.draw(getSprite());
 }
 
 // getters
@@ -42,6 +53,10 @@ ControllerComponent& Entity::getControllerComponent()
 {
   return controllerComponent;
 }
+
+
+sf::Sprite& Entity::getSprite() { return sprite;  }
+const sf::Sprite& Entity::getSprite() const { return sprite;  }
 
 // setters
 void Entity::setPosition(const sf::Vector2f& newPosition)

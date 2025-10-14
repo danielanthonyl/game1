@@ -7,6 +7,7 @@
 #include "Components/ControllerComponent.hpp"
 #include "Components/InputContextComponent.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"
+#include "SFML/Graphics/Sprite.hpp"
 
 class Entity
 {
@@ -21,10 +22,18 @@ class Entity
 
   // getters/setters
   const std::string& getId() const;
+
   const sf::Vector2f& getPosition() const;
+
   AnimationComponent& getAnimationComponent();
+
   InputContextComponent& getInputContextComponent();
+
   ControllerComponent& getControllerComponent();
+
+  sf::Sprite &getSprite();
+
+  const sf::Sprite &getSprite() const;
 
   void setPosition(const sf::Vector2f& newPosition);
 
@@ -34,6 +43,8 @@ class Entity
   AnimationComponent animationComponent;
   InputContextComponent inputContextComponent;
   ControllerComponent controllerComponent;
+  sf::Sprite sprite;
+  sf::Texture defaultTexture;
 
  protected:
   virtual void setupPlayerComponent();

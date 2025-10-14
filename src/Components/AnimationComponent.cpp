@@ -1,17 +1,28 @@
 #include "AnimationComponent.hpp"
 
+#include "SFML/Graphics/Texture.hpp"
 #include "spdlog/spdlog.h"
 
-/**
- * DEBT! texture and animation names are being used interchangeably
- */
-
-AnimationComponent::AnimationComponent() : sprite(defaultTexture)
+AnimationComponent::AnimationComponent()
+    : resourceManager(ResourceManager::getInstance())
 {
-  sprite.setTexture(defaultTexture);
-  sprite.scale({5.0f, 5.0f});
 }
 
+void AnimationComponent::addAnimation(const std::string &textureId)
+{
+  TextureConfig textureConfig;
+
+  ResourceManager &resourceManager = ResourceManager::getInstance();
+
+  textureConfig.textureId = textureId;
+  textureConfig.texture = &resourceManager.getTexture(textureId);
+  textureConfig.textureData = &resourceManager.getTextureData(textureId);
+
+  textures[textureId] = std::move(textureConfig);
+  spdlog::info("Added animation: {}", textureId);
+}
+
+[[DEPRECATED]]
 void AnimationComponent::addAnimation(const std::string &textureId,
                                       const sf::Texture *texture,
                                       const Animation::TextureData *textureData,
@@ -58,7 +69,7 @@ void AnimationComponent::play(std::string textureId)
   animationCycleCount = 0;
 
   TextureConfig &textureConfig = textures[textureId];
-  sprite.setTexture(*textureConfig.texture);
+  // sprite.setTexture(*textureConfig.texture);
   updateFrame();
 }
 
@@ -78,7 +89,8 @@ void AnimationComponent::updateFrame()
   {
     Animation::Frame frame =
         currentAnimation.textureData->frames[currentFrame].frame;
-    sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w, frame.h}));
+    // sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w,
+    // frame.h}));
   }
 }
 
@@ -146,8 +158,8 @@ void AnimationComponent::updateStandbyState()
       Animation::Frame standbyFrame =
           currentAnimation.textureData->frames[currentFrame].frame;
 
-      sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y},
-                                        {standbyFrame.w, standbyFrame.h}));
+      // sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y},
+      // {standbyFrame.w, standbyFrame.h}));
     }
 
     if (standby.onEnterStandby)
@@ -157,9 +169,35 @@ void AnimationComponent::updateStandbyState()
   }
 }
 
-/* Getters */
-sf::Sprite &AnimationComponent::getSprite() { return sprite; }
-const sf::Sprite &AnimationComponent::getSprite() const { return sprite; }
+void AnimationComponent::setAnimation(const std::string textureId)
+{
+  currentTextureId = textureId;
+  currentFrame = 0;
+  elapsedTime = 0.0f;
+  inStandbyMode = false;
+  animationCycleCount = 0;
+}
+
+const sf::Texture &AnimationComponent::getCurrentTexture()
+{
+  return resourceManager.getTexture(currentTextureId);
+};
+
+const sf::IntRect AnimationComponent::getCurrentFrameRect() const
+{
+  Animation::TextureData textureData =
+      resourceManager.getTextureData(currentTextureId);
+
+  if (textureData.frames.empty())
+  {
+    spdlog::warn("texture data {} has no frames. Returning default IntRect");
+    return sf::IntRect();
+  }
+
+  const Animation::Frame &frame = textureData.frames.at(currentFrame).frame;
+
+  return sf::IntRect({frame.x, frame.y}, {frame.w, frame.h});
+}
 
 std::string AnimationComponent::getCurrentAnimationId() const
 {
