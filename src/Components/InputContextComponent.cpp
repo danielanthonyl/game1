@@ -1,10 +1,18 @@
 #include "InputContextComponent.hpp"
 
 #include "../NlohmannJsonParser.hpp"
-#include "spdlog/spdlog.h"
+
+#include "../Entity.hpp"
+#include "../InputContext.hpp"
+#include "../SFMLKeyMap.hpp"
+
+
 
 InputContextComponent::InputContextComponent() {}
 
+/**
+ * DEBT! why resource manager isn't dealing with this?
+ */
 void InputContextComponent::bindContext(const std::string& contextId)
 {
   activeContext = NlohmannJsonParser::parseInputContext(contextId);
@@ -12,14 +20,37 @@ void InputContextComponent::bindContext(const std::string& contextId)
   spdlog::info("Context {} added.", contextId);
 }
 
-void InputContextComponent::bindAction(
-    const InputContext::ActionHandler& actionHandler)
+void InputContextComponent::handleInput()
 {
-  actionHandlers.push_back(actionHandler);
+  for (const InputContext::ActionHandler& actionHandler : actionHandlers)
+  {
+    // DEBT! can be pre-computed instead of called at every frame.
+    sf::Keyboard::Key key = SFMLKeyMap::toKey(actionHandler.action.key);
 
-  spdlog::info("action {} added to bind {}, using context {}",
-               actionHandler.action.id, actionHandler.action.key,
-               activeContextId);
+    bool currentlyPressed = sf::Keyboard::isKeyPressed(key);
+    bool& wasPressed = keyStates[key];
+
+    if (currentlyPressed && !wasPressed)  // pressed
+    {
+      wasPressed = true;
+      spdlog::info("just pressed");
+      actionHandler.actionCallback(InputContext::TriggerEvent::Pressed);
+    }
+    else if (!currentlyPressed && wasPressed)  // released
+    {
+      spdlog::info("just released");
+      wasPressed = false;
+      actionHandler.actionCallback(InputContext::TriggerEvent::Released);
+    }
+    else if (currentlyPressed && wasPressed)  // held
+    {
+      spdlog::info("held");
+      wasPressed = true;
+      actionHandler.actionCallback(InputContext::TriggerEvent::Held);
+    }
+    else  // default
+    {}
+  }
 }
 
 const InputContext::Context& InputContextComponent::getActiveContext() const

@@ -8,174 +8,45 @@ AnimationComponent::AnimationComponent()
 {
 }
 
-void AnimationComponent::addAnimation(const std::string &textureId)
-{
-  TextureConfig textureConfig;
-
-  ResourceManager &resourceManager = ResourceManager::getInstance();
-
-  textureConfig.textureId = textureId;
-  textureConfig.texture = &resourceManager.getTexture(textureId);
-  textureConfig.textureData = &resourceManager.getTextureData(textureId);
-
-  textures[textureId] = std::move(textureConfig);
-  spdlog::info("Added animation: {}", textureId);
-}
-
-[[DEPRECATED]]
-void AnimationComponent::addAnimation(const std::string &textureId,
-                                      const sf::Texture *texture,
-                                      const Animation::TextureData *textureData,
-                                      const int cycles, const int standbyFrame,
-                                      const float frameTime,
-                                      std::function<void()> onEnterStandby)
-{
-  TextureConfig textureConfig;
-
-  textureConfig.textureId = textureId;
-  textureConfig.texture = texture;
-  textureConfig.textureData = textureData;
-  textureConfig.frameTime = frameTime;
-  textureConfig.standby.cyclesBeforeStandby = cycles;
-  textureConfig.standby.standbyFrame = standbyFrame;
-  textureConfig.standby.onEnterStandby = onEnterStandby;
-
-  textures[textureId] = std::move(textureConfig);
-  spdlog::info("Added animation: {}", textureId);
-
-  /* auto play the first added animation */
-  if (textures.size() == 1)
-  {
-    play(textureId);
-  }
-}
-
-void AnimationComponent::play(std::string textureId)
-{
-  auto it = textures.find(textureId);
-
-  if (it == textures.end())
-  {
-    spdlog::error("animation '{}' not found", textureId);
-    return;
-  }
-
-  spdlog::info("Animation switching: {} -> {}", currentTextureId, textureId);
-
-  currentTextureId = textureId;
-  currentFrame = 0;
-  elapsedTime = 0.0f;
-  inStandbyMode = false;
-  animationCycleCount = 0;
-
-  TextureConfig &textureConfig = textures[textureId];
-  // sprite.setTexture(*textureConfig.texture);
-  updateFrame();
-}
-
-void AnimationComponent::updateFrame()
-{
-  auto it = textures.find(currentTextureId);
-
-  if (it == textures.end() || !it->second.textureData)
-  {
-    spdlog::error("invalid animation '{}' for frame update", currentTextureId);
-    return;
-  }
-
-  TextureConfig &currentAnimation = it->second;
-
-  if (currentFrame < currentAnimation.textureData->frames.size())
-  {
-    Animation::Frame frame =
-        currentAnimation.textureData->frames[currentFrame].frame;
-    // sprite.setTextureRect(sf::IntRect({frame.x, frame.y}, {frame.w,
-    // frame.h}));
-  }
-}
-
 void AnimationComponent::update(float deltaTime)
 {
-  if (inStandbyMode || textures.empty() || currentTextureId.empty())
-  {
-    spdlog::info("not updating animation");
-    return;
-  }
-
-  auto it = textures.find(currentTextureId);
-
-  if (it == textures.end())
-  {
-    spdlog::error("invalid animation '{}' for update", currentTextureId);
-    return;
-  }
-
-  TextureConfig &currentAnimation = it->second;
-  elapsedTime += deltaTime;
-
-  if (elapsedTime >= currentAnimation.frameTime)
-  {
-    elapsedTime = 0.0f;
-
-    size_t lastFrame = currentAnimation.textureData->frames.size() - 1;
-    bool wasLastFrame = (currentFrame == lastFrame);
-
-    currentFrame =
-        (currentFrame + 1) % currentAnimation.textureData->frames.size();
-    updateFrame();
-
-    if (wasLastFrame)
-    {
-      animationCycleCount++;
-      updateStandbyState();
-    }
-  }
+  updateAnimationFrame(deltaTime);
 }
 
-void AnimationComponent::updateStandbyState()
+/**
+ * in the future this function could allow custom frame rate per animation.
+ * currently is fixed to FRAME_RATE
+ */
+void AnimationComponent::updateAnimationFrame(float deltaTime)
 {
-  auto it = textures.find(currentTextureId);
-  if (it == textures.end())
+  const Animation::TextureData &textureData =
+      resourceManager.getTextureData(currentTextureId);
+
+  if (textureData.frames.empty())
   {
-    spdlog::error("invalid animation '{}' for standby update",
-                  currentTextureId);
-    ;
     return;
   }
 
-  StandbyConfig &standby = it->second.standby;
+  timeSinceLastFrame += deltaTime;
 
-  if (standby.cyclesBeforeStandby != 0 &&
-      animationCycleCount >= standby.cyclesBeforeStandby)
+  while (timeSinceLastFrame >= frameDuration)
   {
-    inStandbyMode = true;
-
-    TextureConfig currentAnimation = it->second;
-    currentFrame = standby.standbyFrame;
-
-    if (currentFrame < currentAnimation.textureData->frames.size())
-    {
-      Animation::Frame standbyFrame =
-          currentAnimation.textureData->frames[currentFrame].frame;
-
-      // sprite.setTextureRect(sf::IntRect({standbyFrame.x, standbyFrame.y},
-      // {standbyFrame.w, standbyFrame.h}));
-    }
-
-    if (standby.onEnterStandby)
-    {
-      standby.onEnterStandby();
-    }
+    timeSinceLastFrame -= frameDuration;
+    currentFrame = (currentFrame + 1) % textureData.frames.size();
   }
 }
 
+/**
+ * aka playAnimation()
+ */
 void AnimationComponent::setAnimation(const std::string textureId)
 {
+  if(currentTextureId == textureId) return;
+
   currentTextureId = textureId;
   currentFrame = 0;
-  elapsedTime = 0.0f;
-  inStandbyMode = false;
-  animationCycleCount = 0;
+
+  spdlog::info("animation {} set.", textureId);
 }
 
 const sf::Texture &AnimationComponent::getCurrentTexture()
@@ -199,7 +70,7 @@ const sf::IntRect AnimationComponent::getCurrentFrameRect() const
   return sf::IntRect({frame.x, frame.y}, {frame.w, frame.h});
 }
 
-std::string AnimationComponent::getCurrentAnimationId() const
+std::string AnimationComponent::getCurrentTextureId() const
 {
   return currentTextureId;
 }

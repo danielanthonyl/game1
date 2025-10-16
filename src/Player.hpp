@@ -12,12 +12,9 @@ class Player : public Entity
   void update(float deltaTime) override;
   void setupPlayerComponent() override;
 
-  void initializeAnimations();
-
   // movements
-  void moveForward();
+  void moveForward(InputContext::TriggerEvent event);
 
  private:
-  void handleInput();
   bool isMoving = false;
 };

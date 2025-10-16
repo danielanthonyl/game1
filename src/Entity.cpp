@@ -26,12 +26,12 @@ void Entity::update(float deltaTime)
   sprite.setTexture(animationComponent.getCurrentTexture());
   sprite.setTextureRect(animationComponent.getCurrentFrameRect());
 
-  controllerComponent.handleInput(*this);
+  inputContextComponent.handleInput();
 }
 
-void Entity::draw(sf::RenderTarget& target)
+void Entity::draw(sf::RenderWindow& renderWindow)
 {
-  target.draw(getSprite());
+  renderWindow.draw(getSprite());
 }
 
 // getters
@@ -49,17 +49,12 @@ AnimationComponent& Entity::getAnimationComponent()
   return animationComponent;
 }
 
-ControllerComponent& Entity::getControllerComponent()
-{
-  return controllerComponent;
-}
-
-
 sf::Sprite& Entity::getSprite() { return sprite;  }
 const sf::Sprite& Entity::getSprite() const { return sprite;  }
 
 // setters
 void Entity::setPosition(const sf::Vector2f& newPosition)
 {
-  position = newPosition;
+  position += newPosition;
+  sprite.setPosition(position);
 }

@@ -1,17 +1,18 @@
 #include "Player.hpp"
 
 #include "Components/AnimationComponent.hpp"
+#include "Components/InputContextComponent.hpp"
 #include "GameConfig.hpp"
 #include "InputContext.hpp"
-#include "Components/InputContextComponent.hpp"
 #include "ResourceManager.hpp"
 #include "SFMLKeyMap.hpp"
 #include "spdlog/spdlog.h"
 
 Player::Player(const std::string& id) : Entity(id)
 {
-  initializeAnimations();
   getInputContextComponent().bindContext("player-barefoot-icc");
+
+  getAnimationComponent().setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
 }
 
 void Player::setupPlayerComponent()
@@ -27,92 +28,30 @@ void Player::setupPlayerComponent()
     return;
   }
 
-  inputContextComponent.bindAction(InputContext::ActionHandler{
-      *action, std::bind(&Player::moveForward, this)});
+  inputContextComponent.bindAction(*action, &Player::moveForward, this);
 }
 
-void Player::update(float deltaTime)
-{
-  // handleInput();
-  Entity::update(deltaTime);
-}
+void Player::update(float deltaTime) { Entity::update(deltaTime); }
 
-void Player::initializeAnimations()
-{
-
-  AnimationComponent& animationComponent = getAnimationComponent();
-  animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
-  // auto& resourceManager = ResourceManager::getInstance();
-
-  // /*
-  // * addAnimation will take only the Enum (PLAYER_IDLE)
-  // * and animation component wil handle
-  // * the heavy lifting.
-  // *
-  // * maybe entity will actually have methods and stuff to deal with animationComponent.
-  // * gotta think of a way that animationComponent and enitty can deal with sprite.
-  // */
-  // animationComponent.addAnimation(
-  //     GameConfig::AnimationStates::IDLE,
-  //     &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_IDLE),
-  //     &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_IDLE));
-
-  // animationComponent.addAnimation(
-  //     GameConfig::AnimationStates::RUNNING,
-  //     &resourceManager.getTexture(GameConfig::ResourceIds::PLAYER_RUNNING),
-  //     &resourceManager.getTextureData(GameConfig::ResourceIds::PLAYER_RUNNING));
-}
-
-[[deprecated("Use input context component bindAction instead")]]
-void Player::handleInput()
-{
-  AnimationComponent& animationComponent = getAnimationComponent();
-  InputContextComponent& inputContextComponent = getInputContextComponent();
-  const InputContext::Action* action =
-      inputContextComponent.getAction("forward");
-
-  if (!action)
-  {
-    spdlog::error("Action component not found.");
-    return;
-  }
-
-  sf::Keyboard::Key forwardKey = SFMLKeyMap::toKey(action->key);
-
-  bool wasMoving = isMoving;
-  isMoving = false;
-
-  if (sf::Keyboard::isKeyPressed(forwardKey))
-  {
-    isMoving = true;
-
-    if (!wasMoving)
-    {
-      if (animationComponent.getCurrentAnimationId() !=
-          GameConfig::AnimationStates::RUNNING)
-      {
-        animationComponent.play(GameConfig::AnimationStates::RUNNING);
-      }
-    }
-  }
-  else
-  {
-    if (wasMoving)
-    {
-      if (animationComponent.getCurrentAnimationId() !=
-          GameConfig::AnimationStates::IDLE)
-      {
-        animationComponent.play(GameConfig::AnimationStates::IDLE);
-      }
-    }
-  }
-}
-
-void Player::moveForward()
+void Player::moveForward(InputContext::TriggerEvent event)
 {
   spdlog::info("handling forward movement");
+  AnimationComponent& animationComponent = getAnimationComponent();
 
-  // AnimationComponent& animationComponent = getAnimationComponent();
-  // animation component.move? this is wrong. entity should own sprite.
-  // animationComponent.getSprite().move(sf::Vector2f(3.0f, 0.0f));
+  // movement
+  if(event == InputContext::TriggerEvent::Held)
+  {
+    setPosition(sf::Vector2f(4.0f, 0.0f));
+  }
+
+  // animations
+  if (event == InputContext::TriggerEvent::Pressed)
+  {
+    animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_RUNNING);
+  }
+
+  if(event == InputContext::TriggerEvent::Released)
+  {
+    animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
+  }
 }

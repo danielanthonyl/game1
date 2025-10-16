@@ -4,10 +4,9 @@
 
 // DEBT!  dependency injection. maybe use forward declaraction.
 #include "Components/AnimationComponent.hpp"
-#include "Components/ControllerComponent.hpp"
 #include "Components/InputContextComponent.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
 #include "SFML/Graphics/Sprite.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
 
 class Entity
 {
@@ -18,7 +17,7 @@ class Entity
 
   virtual void update(float deltaTime);
 
-  virtual void draw(sf::RenderTarget& target);
+  virtual void draw(sf::RenderWindow& target);
 
   // getters/setters
   const std::string& getId() const;
@@ -28,8 +27,6 @@ class Entity
   AnimationComponent& getAnimationComponent();
 
   InputContextComponent& getInputContextComponent();
-
-  ControllerComponent& getControllerComponent();
 
   sf::Sprite &getSprite();
 
@@ -42,7 +39,6 @@ class Entity
   sf::Vector2f position;
   AnimationComponent animationComponent;
   InputContextComponent inputContextComponent;
-  ControllerComponent controllerComponent;
   sf::Sprite sprite;
   sf::Texture defaultTexture;
 
