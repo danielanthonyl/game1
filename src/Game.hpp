@@ -9,6 +9,8 @@
 #include "spdlog/spdlog.h"
 #include "SFML/Graphics.hpp"
 #include "Entity.hpp"
+#include "World.hpp"
+#include "box2d/box2d.h"
 
 class Game
 {
@@ -20,13 +22,15 @@ public:
 
   Entity& addEntity(std::unique_ptr<Entity> entity);
 
-  /* Getters */
-  Entity *getEntity(const std::string &entityId);
-
 private:
+  // DEBT! debug. (should) be temporary
+  Entity* player;
+
   void render();
   void update(float deltaTime);
   void processEvents();
+
+  World world;
 
   bool running = false;
   sf::Clock clock;

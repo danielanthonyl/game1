@@ -12,14 +12,9 @@ int main()
   spdlog::set_level(spdlog::level::info);
   spdlog::info("Starting Game1");
 
-  Game game("Game 1", 800, 800);
+  Game game("Game 1", 800, 800); // light instantiation
 
-  game.initialize();
-
-  auto player = std::make_unique<Player>("player1");
-  player->initialize();
-  game.addEntity(std::move(player));
-
+  game.initialize(); // heavy operations
   game.run();
 
   spdlog::info("Game shutting down.");

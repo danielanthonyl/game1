@@ -8,11 +8,12 @@
 #include "SFMLKeyMap.hpp"
 #include "spdlog/spdlog.h"
 
-Player::Player(const std::string& id) : Entity(id)
+Player::Player() : Entity()
 {
   getInputContextComponent().bindContext("player-barefoot-icc");
 
   getAnimationComponent().setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
+
 }
 
 void Player::setupPlayerComponent()
@@ -20,7 +21,7 @@ void Player::setupPlayerComponent()
   InputContextComponent& inputContextComponent = getInputContextComponent();
 
   const InputContext::Action* action =
-      inputContextComponent.getAction("forward");
+    inputContextComponent.getAction("forward");
 
   if (!action)
   {
@@ -31,7 +32,9 @@ void Player::setupPlayerComponent()
   inputContextComponent.bindAction(*action, &Player::moveForward, this);
 }
 
-void Player::update(float deltaTime) { Entity::update(deltaTime); }
+void Player::update(float deltaTime) {
+  Entity::update(deltaTime);
+}
 
 void Player::moveForward(InputContext::TriggerEvent event)
 {
@@ -39,9 +42,9 @@ void Player::moveForward(InputContext::TriggerEvent event)
   AnimationComponent& animationComponent = getAnimationComponent();
 
   // movement
-  if(event == InputContext::TriggerEvent::Held)
+  if (event == InputContext::TriggerEvent::Held)
   {
-    setPosition(sf::Vector2f(4.0f, 0.0f));
+    setPosition(sf::Vector2f(1.0f, 0.0f));
   }
 
   // animations
@@ -50,8 +53,9 @@ void Player::moveForward(InputContext::TriggerEvent event)
     animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_RUNNING);
   }
 
-  if(event == InputContext::TriggerEvent::Released)
+  if (event == InputContext::TriggerEvent::Released)
   {
     animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
   }
 }
+

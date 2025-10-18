@@ -3,11 +3,12 @@
 #include <string>
 
 #include "Entity.hpp"
+#include "box2d/box2d.h"
 
 class Player : public Entity
 {
  public:
-  explicit Player(const std::string &id);
+  explicit Player();
 
   void update(float deltaTime) override;
   void setupPlayerComponent() override;
@@ -18,3 +19,5 @@ class Player : public Entity
  private:
   bool isMoving = false;
 };
+
+REGISTER_ENTITY(Player);

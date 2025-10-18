@@ -3,7 +3,9 @@ bin/
 include
 libs
 resources/
+external/
 *.code-workspace
+WARP.md
 
 # IDE and build system files
 .cache/
