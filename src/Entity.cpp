@@ -8,36 +8,36 @@ Entity::Entity()
   : position(0.0f, 0.0f), sprite(defaultTexture)
 {
   sprite.setTexture(defaultTexture);
-
-  //DEBT! debug
-  sprite.scale({ 5.0f, 5.0f });
 }
 
 void Entity::initialize() {
-  if (world != nullptr) {
-
-    b2BodyDef bodyDef = b2DefaultBodyDef();
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position = { 0.0f, 0.0f };
-    bodyId = b2CreateBody(world->getPhysicsWorldId(), &bodyDef);
-
-    // create body collision shape
-    b2Polygon dynamicBox = b2MakeBox(1.0f, 1.0f);
-    b2ShapeDef shapeDef = b2DefaultShapeDef();
-    shapeDef.material.friction = 0.3f;
-    shapeDef.density = 1.0f;
-    b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
-
-    // // create ground
-    // b2BodyDef groundBodyDef = b2DefaultBodyDef();
-    // groundBodyDef.position = { 0.0f, 300.0f };
-    // b2BodyId groundId = b2CreateBody(world->getPhysicsWorldId(), &groundBodyDef);
-
-    // // create ground collision shape
-    // b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
-    // b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-    // b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+  if (world == nullptr)
+  {
+    // DEBT! missing member name
+    spdlog::error("entity {} not attached to a world.", "player");
+    return;
   }
+
+  //DEBT! debug
+  applyTexture();
+  // sprite.scale(initialScale);
+
+  width = sprite.getGlobalBounds().size.x / PIXELS_PER_METER;
+  height = sprite.getGlobalBounds().size.y / PIXELS_PER_METER;
+
+  b2BodyDef bodyDef = b2DefaultBodyDef();
+  bodyDef.type = bodyType;
+  bodyDef.position = initialPosition;
+  bodyId = b2CreateBody(world->getPhysicsWorldId(), &bodyDef);
+
+  // create body collision shape
+  b2Polygon dynamicBox = b2MakeBox(
+    width / 2.0f, height / 2.0f);
+
+  b2ShapeDef shapeDef = b2DefaultShapeDef();
+  shapeDef.material.friction = 0.3f;
+  shapeDef.density = 1.0f;
+  b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
 
   setupPlayerComponent();
 }
@@ -51,13 +51,15 @@ void Entity::update(float deltaTime)
 {
   // animation handler
   animationComponent.update(deltaTime);
-  sprite.setTexture(animationComponent.getCurrentTexture());
-  sprite.setTextureRect(animationComponent.getCurrentFrameRect());
+
+  applyTexture();
 
   // physics handler
-  b2Vec2 bodyPos = b2Body_GetPosition(bodyId);
-  sf::Vector2 pos(bodyPos.x * PIXELS_PER_METER, bodyPos.y * PIXELS_PER_METER);
-  sprite.setPosition(pos);
+  // b2Vec2 bodyPos = b2Body_GetPosition(bodyId);
+  // sf::Vector2 pos(bodyPos.x * PIXELS_PER_METER, bodyPos.y * PIXELS_PER_METER);
+  // sprite.setPosition(pos);
+  // rectangle.setPosition(pos);
+  // rectangle.setPosition({ bodyPos.x , bodyPos.y });
 
   // input handler
   inputContextComponent.handleInput();
@@ -65,6 +67,22 @@ void Entity::update(float deltaTime)
 
 void Entity::draw(sf::RenderWindow& renderWindow)
 {
+  b2Vec2 bodyPos = b2Body_GetPosition(bodyId);
+  sf::Vector2f pos(bodyPos.x * PIXELS_PER_METER, bodyPos.y * PIXELS_PER_METER);
+
+  sf::Vector2f size = { width * PIXELS_PER_METER, height * PIXELS_PER_METER };
+
+  rectangle.setSize(size);
+  rectangle.setOrigin({ size.x / 2, size.y / 2 });
+  rectangle.setPosition(pos);
+  rectangle.setOutlineColor(sf::Color::Red);
+  rectangle.setFillColor(sf::Color::Transparent);
+  rectangle.setOutlineThickness(1);
+  renderWindow.draw(rectangle);
+
+  // sprite
+  getSprite().setOrigin({ size.x / 2, size.y / 2 });
+  getSprite().setPosition(pos);
   renderWindow.draw(getSprite());
 }
 
@@ -74,13 +92,13 @@ std::map<std::string, Entity::CreatorFunc>& Entity::getRegistry()
   return registry;
 }
 
-Entity* Entity::create(const std::string& name)
+std::unique_ptr<Entity> Entity::create(const std::string& name)
 {
   // DEBT! implement getName();
   auto it = getRegistry().find(name);
   if (it == getRegistry().end()) return nullptr;
 
-  return it->second();
+  return std::unique_ptr<Entity>(it->second());
 }
 
 InputContextComponent& Entity::getInputContextComponent()
@@ -111,9 +129,24 @@ void Entity::setWorld(World* worldPtr)
 void Entity::setPosition(const sf::Vector2f& newPosition)
 {
   position += newPosition;
-  // sprite.setPosition(position);
+  sprite.setPosition(position);
 
   b2Vec2 pos(position.x, position.y);
   b2Body_SetLinearVelocity(bodyId, pos);
   // b2Body_SetTransform(bodyId, pos, b2Body_GetRotation(bodyId));
+}
+
+void Entity::applyTexture()
+{
+  if (animationComponent.getCurrentTextureId() != lastTextureId)
+  {
+    sprite.setTexture(animationComponent.getCurrentTexture());
+    lastTextureId = animationComponent.getCurrentTextureId();
+  }
+
+  if (animationComponent.getCurrentFrameInt() != lastFrameInt)
+  {
+    sprite.setTextureRect(animationComponent.getCurrentFrameRect());
+    lastFrameInt = animationComponent.getCurrentFrameInt();
+  }
 }

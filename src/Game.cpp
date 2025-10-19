@@ -12,6 +12,9 @@ void Game::initialize()
 {
   auto& resourceManager = ResourceManager::getInstance();
 
+  //DEBT! debug.
+  resourceManager.loadTextureAsset("tile", "./tile.png", "./tile.json");
+
   resourceManager.loadTextureAsset(
     GameConfig::ResourceIds::PLAYER_IDLE,
     GameConfig::ResourcePaths::PLAYER_IDLE_TEXTURE,
@@ -23,8 +26,8 @@ void Game::initialize()
     GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE_DATA);
 
   // DEBT! debug. This should come from file - data driven
-  player = Entity::create("Player");
-  world.spawnEntity(player);
+  world.spawnEntity("Player");
+  world.spawnEntity("Tile");
 
   spdlog::info("Game initialized.");
 }
@@ -57,35 +60,14 @@ void Game::processEvents()
 
 void Game::update(float deltaTime)
 {
-  // for (auto& entity : entities)
-  // {
-  //   entity->update(deltaTime);
-  // }
-
-  world.update();
-  player->update(deltaTime);
+  world.update(deltaTime);
 }
 
 void Game::render()
 {
   window.clear(sf::Color::White);
 
-  // b2Vec2 position = b2Body_GetPosition(bodyId);
-  // b2Rot rotation = b2Body_GetRotation(bodyId);
-
-  // sf::RectangleShape rectangle;
-  // rectangle.setSize(sf::Vector2f(2.0f, 2.0f));
-  // rectangle.setOutlineColor(sf::Color::Red);
-  // rectangle.setOutlineThickness(5);
-  // rectangle.setPosition({ position.x, position.y });
-  // window.draw(rectangle);
-
-  // for (auto& entity : entities)
-  // {
-  //   entity->draw(window);
-  // }
-
-  player->draw(window);
+  world.render(window);
 
   window.display();
 }

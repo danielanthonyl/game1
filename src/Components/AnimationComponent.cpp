@@ -4,13 +4,15 @@
 #include "spdlog/spdlog.h"
 
 AnimationComponent::AnimationComponent()
-    : resourceManager(ResourceManager::getInstance())
+  : resourceManager(ResourceManager::getInstance())
 {
 }
 
 void AnimationComponent::update(float deltaTime)
 {
-  updateAnimationFrame(deltaTime);
+  if (isPlaying) {
+    updateAnimationFrame(deltaTime);
+  }
 }
 
 /**
@@ -19,8 +21,8 @@ void AnimationComponent::update(float deltaTime)
  */
 void AnimationComponent::updateAnimationFrame(float deltaTime)
 {
-  const Animation::TextureData &textureData =
-      resourceManager.getTextureData(currentTextureId);
+  const Animation::TextureData& textureData =
+    resourceManager.getTextureData(currentTextureId);
 
   if (textureData.frames.empty())
   {
@@ -36,20 +38,23 @@ void AnimationComponent::updateAnimationFrame(float deltaTime)
   }
 }
 
-/**
- * aka playAnimation()
- */
-void AnimationComponent::setAnimation(const std::string textureId)
+void AnimationComponent::playAnimation(const std::string textureId)
 {
-  if(currentTextureId == textureId) return;
-
   currentTextureId = textureId;
   currentFrame = 0;
+  isPlaying = true;
 
   spdlog::info("animation {} set.", textureId);
 }
 
-const sf::Texture &AnimationComponent::getCurrentTexture()
+void AnimationComponent::setTexture(const std::string textureId)
+{
+  currentTextureId = textureId;
+  currentFrame = 0;
+  isPlaying = false;
+}
+
+const sf::Texture& AnimationComponent::getCurrentTexture()
 {
   return resourceManager.getTexture(currentTextureId);
 };
@@ -57,7 +62,7 @@ const sf::Texture &AnimationComponent::getCurrentTexture()
 const sf::IntRect AnimationComponent::getCurrentFrameRect() const
 {
   Animation::TextureData textureData =
-      resourceManager.getTextureData(currentTextureId);
+    resourceManager.getTextureData(currentTextureId);
 
   if (textureData.frames.empty())
   {
@@ -65,12 +70,18 @@ const sf::IntRect AnimationComponent::getCurrentFrameRect() const
     return sf::IntRect();
   }
 
-  const Animation::Frame &frame = textureData.frames.at(currentFrame).frame;
+  const Animation::Frame& frame = textureData.frames.at(currentFrame).frame;
 
-  return sf::IntRect({frame.x, frame.y}, {frame.w, frame.h});
+  return sf::IntRect({ frame.x, frame.y }, { frame.w, frame.h });
 }
 
-std::string AnimationComponent::getCurrentTextureId() const
+const std::string& AnimationComponent::getCurrentTextureId() const
 {
   return currentTextureId;
 }
+
+const size_t& AnimationComponent::getCurrentFrameInt() const
+{
+  return currentFrame;
+}
+

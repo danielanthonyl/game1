@@ -13,8 +13,8 @@ ResourceManager &ResourceManager::getInstance()
   return instance;
 }
 
-bool ResourceManager::loadTexture(const std::string id,
-                                  const std::string texturePath)
+bool ResourceManager::loadTexture(const std::string& id,
+                                  const std::string& texturePath)
 {
   if (textures.find(id) != textures.end())
   {
@@ -35,8 +35,8 @@ bool ResourceManager::loadTexture(const std::string id,
   return true;
 }
 
-bool ResourceManager::loadTextureData(const std::string id,
-                                      const std::string textureDataPath)
+bool ResourceManager::loadTextureData(const std::string& id,
+                                      const std::string& textureDataPath)
 {
   if (texturesDatas.find(id) != texturesDatas.end())
   {
@@ -59,8 +59,8 @@ bool ResourceManager::loadTextureData(const std::string id,
   return true;
 }
 
-bool ResourceManager::loadTextureAsset(std::string id, std::string texturePath,
-                                       std::string textureDataPath)
+bool ResourceManager::loadTextureAsset(const std::string& id, const std::string& texturePath,
+                                       const std::string& textureDataPath)
 {
   bool textureLoaded = loadTexture(id, texturePath);
   bool textureDataLoaded = loadTextureData(id, textureDataPath);

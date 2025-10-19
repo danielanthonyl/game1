@@ -10,10 +10,13 @@
 
 Player::Player() : Entity()
 {
+  name = "Player";
+  initialScale = {1.0f, 1.0f};
+  initialPosition = {1.0f, 0.0f};
   getInputContextComponent().bindContext("player-barefoot-icc");
 
-  getAnimationComponent().setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
-
+  getAnimationComponent().setTexture(GameConfig::ResourceIds::PLAYER_IDLE);
+  getAnimationComponent().playAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
 }
 
 void Player::setupPlayerComponent()
@@ -30,6 +33,7 @@ void Player::setupPlayerComponent()
   }
 
   inputContextComponent.bindAction(*action, &Player::moveForward, this);
+
 }
 
 void Player::update(float deltaTime) {
@@ -50,12 +54,12 @@ void Player::moveForward(InputContext::TriggerEvent event)
   // animations
   if (event == InputContext::TriggerEvent::Pressed)
   {
-    animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_RUNNING);
+    animationComponent.playAnimation(GameConfig::ResourceIds::PLAYER_RUNNING);
   }
 
   if (event == InputContext::TriggerEvent::Released)
   {
-    animationComponent.setAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
+    animationComponent.playAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
   }
 }
 

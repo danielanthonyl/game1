@@ -24,7 +24,7 @@ public:
 
 private:
   // DEBT! debug. (should) be temporary
-  Entity* player;
+  std::unique_ptr<Entity> player;
 
   void render();
   void update(float deltaTime);
