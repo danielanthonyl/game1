@@ -29,7 +29,7 @@ public:
   virtual ~Entity() = default;
   explicit Entity();
 
-  void initialize();
+  virtual void initialize();
 
   virtual void update(float deltaTime);
 
@@ -56,6 +56,7 @@ public:
   const World* getWorld() const;
 
   void setPosition(const sf::Vector2f& newPosition);
+  void addMovementInput(const sf::Vector2f& newPosition);
 
 private:
   constexpr static float PIXELS_PER_METER = 100.0f;
@@ -64,13 +65,13 @@ private:
   // DEBUG
   sf::RectangleShape rectangle;
   void applyTexture();
+  sf::Vector2f position = {0.0f, 0.0f};
 
   // components
   AnimationComponent animationComponent;
   InputContextComponent inputContextComponent;
 
   World* world = nullptr;
-  sf::Vector2f position;
   sf::Sprite sprite;
 
   b2BodyId bodyId;
@@ -83,14 +84,15 @@ private:
   static std::map<std::string, CreatorFunc>& getRegistry();
 
 protected:
-  // DEBUG
+  // DEBUG - maybe getters/setters are more appropriate.
   std::string name;
   float width = 41.0f;
   float height = 48.0f;
-
-  b2BodyType bodyType = BodyTypes::Dynamic;
+  float friction = 1.0f;
   b2Vec2 initialPosition = {0.0f, 0.0f};
   sf::Vector2f initialScale = {1.0f, 1.0f};
+
+  b2BodyType bodyType = BodyTypes::Dynamic;
 
   virtual void setupPlayerComponent();
 };

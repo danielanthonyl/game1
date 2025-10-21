@@ -10,6 +10,8 @@ class Player : public Entity
  public:
   explicit Player();
 
+  void initialize() override;
+
   void update(float deltaTime) override;
   void setupPlayerComponent() override;
 

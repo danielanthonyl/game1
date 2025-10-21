@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "spdlog/spdlog.h"
+#include "SFML/Graphics.hpp"
 
 World::World()
 {
@@ -49,16 +50,21 @@ void World::render(sf::RenderWindow& window)
   }
 }
 
-void World::spawnEntity(std::unique_ptr<Entity> entity) {
-  if (entity == nullptr)
+void World::spawnEntities(const std::vector<EntitySpawnParameters>& spawnParameters) {
+  if (spawnParameters.empty())
   {
     spdlog::error("attempt to spawn empty entity");
     return;
   }
 
-  entity->setWorld(this);
-  entity->initialize();
-  entities.push_back(std::move(entity));
+  for (const EntitySpawnParameters& entityParameter : spawnParameters)
+  {
+    std::unique_ptr<Entity> entity = Entity::create(entityParameter.name);
+    entity->setWorld(this);
+    entity->initialize();
+    entity->setPosition(entityParameter.coordinates);
+    entities.push_back(std::move(entity));
+  }
 }
 
 void World::spawnEntity(const std::string& name)
@@ -69,5 +75,8 @@ void World::spawnEntity(const std::string& name)
     return;
   }
 
-  spawnEntity(Entity::create(name));
+  std::unique_ptr<Entity> entity = Entity::create(name);
+  entity->setWorld(this);
+  entity->initialize();
+  entities.push_back(std::move(entity));
 }

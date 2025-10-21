@@ -4,22 +4,23 @@
 #include "box2d/box2d.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 
+struct EntitySpawnParameters
+{
+  std::string name;
+  sf::Vector2f coordinates;
+};
+
 class World {
 public:
   explicit World();
 
   ~World();
 
-  // void initialize();
-
   void update(float deltaTime);
   void render(sf::RenderWindow& window);
 
-  void spawnEntity(std::unique_ptr<Entity> entity);
   void spawnEntity(const std::string& name);
-
-
-  void update();
+  void spawnEntities(const std::vector<EntitySpawnParameters>& entityParameters);
 
   const b2WorldId getPhysicsWorldId() const;
 

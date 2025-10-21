@@ -11,12 +11,20 @@
 Player::Player() : Entity()
 {
   name = "Player";
-  initialScale = {1.0f, 1.0f};
-  initialPosition = {1.0f, 0.0f};
-  getInputContextComponent().bindContext("player-barefoot-icc");
+  initialScale = { 5.0f, 5.0f };
+  friction = 0.1f;
 
+  getInputContextComponent().bindContext("player-barefoot-icc");
   getAnimationComponent().setTexture(GameConfig::ResourceIds::PLAYER_IDLE);
   getAnimationComponent().playAnimation(GameConfig::ResourceIds::PLAYER_IDLE);
+}
+
+
+void Player::initialize()
+{
+  Entity::initialize();
+
+  // setPosition({ 1.0f, 2.0f });
 }
 
 void Player::setupPlayerComponent()
@@ -48,7 +56,7 @@ void Player::moveForward(InputContext::TriggerEvent event)
   // movement
   if (event == InputContext::TriggerEvent::Held)
   {
-    setPosition(sf::Vector2f(1.0f, 0.0f));
+    addMovementInput(sf::Vector2f(1.0f, 0.0f));
   }
 
   // animations

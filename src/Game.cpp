@@ -26,8 +26,13 @@ void Game::initialize()
     GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE_DATA);
 
   // DEBT! debug. This should come from file - data driven
-  world.spawnEntity("Player");
-  world.spawnEntity("Tile");
+  std::vector<EntitySpawnParameters> entities{
+    {"Player", {1.0f, 2.0f}},
+    {"Tile",   {2.0f, 4.0f}},
+    {"Tile",   {4.7f, 4.0f}}
+  };
+
+  world.spawnEntities(entities);
 
   spdlog::info("Game initialized.");
 }
