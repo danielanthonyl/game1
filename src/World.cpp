@@ -7,6 +7,7 @@ World::World()
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = { 0.0f, 10.0f };
   worldId = b2CreateWorld(&worldDef);
+  spdlog::info("world constructed.");
 }
 
 World::~World()
@@ -78,5 +79,16 @@ void World::spawnEntity(const std::string& name)
   std::unique_ptr<Entity> entity = Entity::create(name);
   entity->setWorld(this);
   entity->initialize();
+  entities.push_back(std::move(entity));
+}
+
+void World::spawnEntity(std::unique_ptr<Entity> entity)
+{
+  if (entity == nullptr)
+  {
+    spdlog::error("attempt to spawn empty entity");
+    return;
+  }
+
   entities.push_back(std::move(entity));
 }

@@ -9,6 +9,8 @@
 // DEBT!  dependency injection. maybe use forward declaraction.
 #include "Components/AnimationComponent.hpp"
 #include "Components/InputContextComponent.hpp"
+#include "Components/PhysicsComponent.hpp"
+
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "box2d/box2d.h"
@@ -19,6 +21,14 @@ class World;
 struct BodyTypes {
   constexpr static b2BodyType Static = b2_staticBody;
   constexpr static b2BodyType Dynamic = b2_dynamicBody;
+};
+
+enum PivotPoints
+{
+  TopLeft,
+  TopCenter,
+  CenterCenter,
+  BottomCenter
 };
 
 class Entity
@@ -47,7 +57,6 @@ public:
   const sf::Vector2f& getPosition() const;
 
   AnimationComponent& getAnimationComponent();
-
   InputContextComponent& getInputContextComponent();
 
   sf::Sprite& getSprite();
@@ -57,6 +66,7 @@ public:
 
   void setPosition(const sf::Vector2f& newPosition);
   void addMovementInput(const sf::Vector2f& newPosition);
+  void setPivotPoint(PivotPoints pivotPoint);
 
 private:
   constexpr static float PIXELS_PER_METER = 100.0f;
@@ -66,10 +76,7 @@ private:
   sf::RectangleShape rectangle;
   void applyTexture();
   sf::Vector2f position = {0.0f, 0.0f};
-
-  // components
-  AnimationComponent animationComponent;
-  InputContextComponent inputContextComponent;
+  sf::Vector2f pivotPoint;
 
   World* world = nullptr;
   sf::Sprite sprite;
@@ -92,9 +99,22 @@ protected:
   b2Vec2 initialPosition = {0.0f, 0.0f};
   sf::Vector2f initialScale = {1.0f, 1.0f};
 
+  // components
+  AnimationComponent animationComponent;
+  InputContextComponent inputContextComponent;
+  PhysicsComponent physicsComponent;
+
   b2BodyType bodyType = BodyTypes::Dynamic;
 
   virtual void setupPlayerComponent();
+
+  /**
+   * DEBT!
+   * these functions will be replaced.
+   * there will be a class for each shape.
+   */
+  void createBox();
+  void createChain();
 };
 
 #define REGISTER_ENTITY(ClassName) \

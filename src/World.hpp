@@ -20,6 +20,7 @@ public:
   void render(sf::RenderWindow& window);
 
   void spawnEntity(const std::string& name);
+  void spawnEntity(std::unique_ptr<Entity> entity);
   void spawnEntities(const std::vector<EntitySpawnParameters>& entityParameters);
 
   const b2WorldId getPhysicsWorldId() const;

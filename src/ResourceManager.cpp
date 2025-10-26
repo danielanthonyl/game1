@@ -98,3 +98,4 @@ const Animation::TextureData &ResourceManager::getTextureData(
                textureDataId);
   return defaultTextureData;
 }
+

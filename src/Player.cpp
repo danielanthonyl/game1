@@ -24,6 +24,12 @@ void Player::initialize()
 {
   Entity::initialize();
 
+  /** DEBT! player should be bottom center.
+   * Need to check why collision isn't working when in bottom center
+   */
+  setPivotPoint(PivotPoints::CenterCenter);
+  createBox();
+
   // setPosition({ 1.0f, 2.0f });
 }
 

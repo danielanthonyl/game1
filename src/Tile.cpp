@@ -16,10 +16,13 @@ void Tile::initialize()
 {
   Entity::initialize();
 
-  // setPosition({2.0f, 4.0f});
+  setPivotPoint(PivotPoints::TopCenter);
+  createChain();
+
 }
 
 void Tile::setTilePosition(sf::Vector2f& position)
 {
   setPosition(position);
 }
+
