@@ -22,8 +22,7 @@ Animation::TextureData NlohmannJsonParser::parseTextureData(
   }
   catch (const std::exception& e)
   {
-    throw std::runtime_error("Failed to parse file [" + textureDataPath +
-                             "]:\n" + e.what());
+    throw std::runtime_error("Failed to parse file [" + textureDataPath + "]:\n" + e.what());
   }
 }
 
@@ -46,7 +45,27 @@ InputContext::Context NlohmannJsonParser::parseInputContext(
   }
   catch (const std::exception& e)
   {
-    throw std::runtime_error("Failed to parse file [" + inputContextPath +
-                             "]:\n" + e.what());
+    throw std::runtime_error("Failed to parse file [" + inputContextPath + "]:\n" + e.what());
+  }
+}
+
+
+TileSetDTO NlohmannJsonParser::parseTileSet(const std::string& tileSetAssetPath)
+{
+  std::ifstream rawTileSet(tileSetAssetPath);
+
+  if(!rawTileSet.is_open())
+  {
+    throw std::runtime_error("Failed to open tile set: " + tileSetAssetPath);
+  }
+
+  try
+  {
+    return nlohmann::json::parse(rawTileSet).get<TileSetDTO>();
+
+  }
+  catch(const std::exception& e)
+  {
+    throw std::runtime_error("Failed to parse file [" + tileSetAssetPath + "]:\n" + e.what());
   }
 }

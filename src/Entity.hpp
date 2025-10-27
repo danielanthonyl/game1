@@ -43,7 +43,7 @@ public:
 
   virtual void update(float deltaTime);
 
-  virtual void draw(sf::RenderWindow& target);
+  virtual void draw(sf::RenderWindow& renderWindow);
 
   static std::unique_ptr<Entity> create(const std::string& name);
 
@@ -59,6 +59,8 @@ public:
   AnimationComponent& getAnimationComponent();
   InputContextComponent& getInputContextComponent();
 
+  // DEBT! it should own the SceneComponent instead. The "RootComponent"
+  // which defines the entity's transforms in the world.
   sf::Sprite& getSprite();
   const sf::Sprite& getSprite() const;
 

@@ -24,7 +24,7 @@ public:
 
 private:
   // DEBT! debug. (should) be temporary
-  std::unique_ptr<Entity> player;
+  std::unique_ptr<TileLayer> tileLayer;
 
   void render();
   void update(float deltaTime);

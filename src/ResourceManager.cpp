@@ -7,14 +7,14 @@
 
 ResourceManager::ResourceManager() {}
 
-ResourceManager &ResourceManager::getInstance()
+ResourceManager& ResourceManager::getInstance()
 {
   static ResourceManager instance;
   return instance;
 }
 
 bool ResourceManager::loadTexture(const std::string& id,
-                                  const std::string& texturePath)
+  const std::string& texturePath)
 {
   if (textures.find(id) != textures.end())
   {
@@ -36,7 +36,7 @@ bool ResourceManager::loadTexture(const std::string& id,
 }
 
 bool ResourceManager::loadTextureData(const std::string& id,
-                                      const std::string& textureDataPath)
+  const std::string& textureDataPath)
 {
   if (texturesDatas.find(id) != texturesDatas.end())
   {
@@ -45,7 +45,7 @@ bool ResourceManager::loadTextureData(const std::string& id,
   }
 
   Animation::TextureData textureData =
-      NlohmannJsonParser().parseTextureData(textureDataPath);
+    NlohmannJsonParser().parseTextureData(textureDataPath);
 
   if (textureData.frames.empty())
   {
@@ -60,7 +60,7 @@ bool ResourceManager::loadTextureData(const std::string& id,
 }
 
 bool ResourceManager::loadTextureAsset(const std::string& id, const std::string& texturePath,
-                                       const std::string& textureDataPath)
+  const std::string& textureDataPath)
 {
   bool textureLoaded = loadTexture(id, texturePath);
   bool textureDataLoaded = loadTextureData(id, textureDataPath);
@@ -68,10 +68,50 @@ bool ResourceManager::loadTextureAsset(const std::string& id, const std::string&
   return textureLoaded && textureDataLoaded;
 }
 
-/* Getters */
+bool ResourceManager::loadTileSetAsset(const std::string& id, const std::string& tileSetAssetPath)
+{
+  if (tileSets.find(id) != tileSets.end())
+  {
+    spdlog::info("tileset {} already loaded", id);
+    return true;
+  }
 
-const sf::Texture &ResourceManager::getTexture(
-    const std::string &textureId) const
+  // DEBT! try catch!
+  try
+  {
+    // DEBT! store tileSetDTO when needed.
+    TileSetDTO tileSetDTO = NlohmannJsonParser::parseTileSet(tileSetAssetPath);
+
+    auto texture = std::make_unique<sf::Texture>();
+
+    if(!texture->loadFromFile(tileSetDTO.texturePath))
+    {
+      spdlog::error("error loading texture", tileSetDTO.texturePath);
+      throw std::runtime_error("error loading texture.");
+    };
+
+    tileMapTextures[id] = std::move(texture);
+
+    auto tileSet = std::make_unique<TileSet>();
+
+    tileSet->texture = tileMapTextures[id].get();
+    tileSet->tileSize = tileSetDTO.tileSize;
+
+    tileSets[id] = std::move(tileSet);
+
+
+    spdlog::info("Loaded texture '{}' from {}", id, tileSetAssetPath);
+    return true;
+  }
+  catch (const std::exception& e)
+  {
+    spdlog::error("error loading tile set asset {} on path {}.\n Error: {}", id, tileSetAssetPath, e.what());
+    return false;
+  }
+}
+
+const sf::Texture& ResourceManager::getTexture(
+  const std::string& textureId) const
 {
   auto it = textures.find(textureId);
 
@@ -84,8 +124,8 @@ const sf::Texture &ResourceManager::getTexture(
   return defaultTexture;
 }
 
-const Animation::TextureData &ResourceManager::getTextureData(
-    const std::string &textureDataId) const
+const Animation::TextureData& ResourceManager::getTextureData(
+  const std::string& textureDataId) const
 {
   auto it = texturesDatas.find(textureDataId);
 
@@ -95,7 +135,21 @@ const Animation::TextureData &ResourceManager::getTextureData(
   }
 
   spdlog::warn("Texture data {} not found. Returning default texture data",
-               textureDataId);
+    textureDataId);
   return defaultTextureData;
 }
 
+const TileSet* ResourceManager::getTileSet(const std::string& tileSetId) const
+{
+  auto it = tileSets.find(tileSetId);
+
+  if (it == tileSets.end())
+  {
+
+    spdlog::warn("tile set {} not found. Make sure it was loaded. Returning empty tile set.");
+
+    return nullptr;
+  }
+
+  return it->second.get();
+}

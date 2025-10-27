@@ -21,6 +21,10 @@ public:
 
   void spawnEntity(const std::string& name);
   void spawnEntity(std::unique_ptr<Entity> entity);
+
+  template<typename T>
+  T* spawnEntity();
+
   void spawnEntities(const std::vector<EntitySpawnParameters>& entityParameters);
 
   const b2WorldId getPhysicsWorldId() const;
@@ -36,3 +40,5 @@ public:
   void updateWorld();
   void updateEntities(float deltaTime);
 };
+
+#include "World.inl"
