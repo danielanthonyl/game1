@@ -36,10 +36,10 @@ void Entity::createBox()
   physicsComponent.createBox(width, height, friction);
 }
 
-void Entity::createChain()
-{
-  physicsComponent.createChain();
-}
+// void Entity::createChain()
+// {
+//   physicsComponent.createChain();
+// }
 
 void Entity::setupPlayerComponent()
 {
@@ -137,12 +137,17 @@ InputContextComponent& Entity::getInputContextComponent()
   return inputContextComponent;
 }
 
-const sf::Vector2f& Entity::getPosition() const { return position; }
-
 AnimationComponent& Entity::getAnimationComponent()
 {
   return animationComponent;
 }
+
+PhysicsComponent& Entity::getPhysicsComponent()
+{
+  return physicsComponent;
+}
+
+const sf::Vector2f& Entity::getPosition() const { return position; }
 
 sf::Sprite& Entity::getSprite() { return sprite; }
 const sf::Sprite& Entity::getSprite() const { return sprite; }

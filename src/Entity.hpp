@@ -6,7 +6,7 @@
 
 #include <string>
 
-// DEBT!  dependency injection. maybe use forward declaraction.
+ // DEBT!  dependency injection. maybe use forward declaraction.
 #include "Components/AnimationComponent.hpp"
 #include "Components/InputContextComponent.hpp"
 #include "Components/PhysicsComponent.hpp"
@@ -56,8 +56,11 @@ public:
 
   const sf::Vector2f& getPosition() const;
 
+  // DEBT! add controlled component - registry.
+  // getComponent / setComponent template operations.
   AnimationComponent& getAnimationComponent();
   InputContextComponent& getInputContextComponent();
+  PhysicsComponent& getPhysicsComponent();
 
   // DEBT! it should own the SceneComponent instead. The "RootComponent"
   // which defines the entity's transforms in the world.
@@ -77,7 +80,7 @@ private:
   // DEBUG
   sf::RectangleShape rectangle;
   void applyTexture();
-  sf::Vector2f position = {0.0f, 0.0f};
+  sf::Vector2f position = { 0.0f, 0.0f };
   sf::Vector2f pivotPoint;
 
   World* world = nullptr;
@@ -98,8 +101,8 @@ protected:
   float width = 41.0f;
   float height = 48.0f;
   float friction = 1.0f;
-  b2Vec2 initialPosition = {0.0f, 0.0f};
-  sf::Vector2f initialScale = {1.0f, 1.0f};
+  b2Vec2 initialPosition = { 0.0f, 0.0f };
+  sf::Vector2f initialScale = { 1.0f, 1.0f };
 
   // components
   AnimationComponent animationComponent;

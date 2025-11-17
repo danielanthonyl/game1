@@ -1,6 +1,6 @@
 #include "Game.hpp"
 
-#include "Tile.hpp"
+#include "TileMapEntity.hpp"
 
 
 Game::Game(const std::string& title, unsigned int width, unsigned int height)
@@ -28,62 +28,52 @@ void Game::initialize()
     GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE,
     GameConfig::ResourcePaths::PLAYER_RUNNING_TEXTURE_DATA);
 
-  /**
-   * Resource Manager -> load/unload json and png data for tilemaps [DONE]
-   * Game -> instantiate resource manager and the TileMap data object.
-   * TileMap -> creates a list of Tile each Tile would be another data object for each tile. (2 structs)
-   * TileMapComponent -> grabs the TileMap and loop over rendering and handling collisions.
-   * TileMapEntity -> owns all components and data object and orchestrate communication.
-   */
+  // DEBT! debug. This should come from file - data driven
+  // spawn tiles
+  std::vector<std::unique_ptr<TileInfo>> tiles;
 
+  constexpr std::nullopt_t null = std::nullopt;
+  std::vector<std::optional<size_t>> tileMap = {
+    null, null, null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null, null, null,  390, null,
+       0,    1,    2,    3,    4, null,    0,    1,    2,    3,    4, null,
+      25,   26,   27,   28,   29, null,   25,   26,   27,   28,   29, null,
+     100,  101,  102,  103,  104, null,  100,  101,  102,  103,  104, null,
+  };
 
-   // DEBT! debug. This should come from file - data driven
+  for (auto& tileIndex : tileMap)
+  {
+    std::unique_ptr<TileInfo> tileInfo;
+
+    if (tileIndex.has_value())
+    {
+      tileInfo = std::make_unique<TileInfo>();
+      tileInfo->tileIndex = *tileIndex;
+      tileInfo->tileSet = resourceManager.getTileSet("level1");
+    }
+
+    tiles.push_back(std::move(tileInfo));
+  }
+
+  tileLayer = std::make_unique<TileLayer>();
+  tileLayer->width = 12;
+  tileLayer->height = 8;
+  tileLayer->tiles = std::move(tiles);
+
+  TileMapEntity* tile = world.spawnEntity<TileMapEntity>();
+  tile->setPosition({ 0.0f, 0.0f });
+  // tile->setTileMap(tileLayer.get());
+  tile->getTileMapComponent().setTileMap(tileLayer.get());
+
+  // spawn player
   std::vector<EntitySpawnParameters> entities{
-    {"Player", {3.0f, 0.0f}},
-    // {"Tile",   {2.0f, 3.0f}},
-    // {"Tile",   {4.7f, 4.0f}}
+    {"Player", {0.0f, 0.0f}},
   };
 
   world.spawnEntities(entities);
-
-  std::unique_ptr<TileInfo> tileInfo;
-  tileInfo = std::make_unique<TileInfo>();
-  tileInfo->tileIndex = 0;
-  tileInfo->tileSet = resourceManager.getTileSet("level1");
-
-  std::unique_ptr<TileInfo> tileInfo2;
-  tileInfo2 = std::make_unique<TileInfo>();
-  tileInfo2->tileIndex = 1;
-  tileInfo2->tileSet = resourceManager.getTileSet("level1");
-
-  std::unique_ptr<TileInfo> tileInfo3;
-  tileInfo3 = std::make_unique<TileInfo>();
-  tileInfo3->tileIndex = 2;
-  tileInfo3->tileSet = resourceManager.getTileSet("level1");
-
-  std::vector<std::unique_ptr<TileInfo>> tiles;
-  tiles.push_back(std::move(tileInfo));
-  tiles.push_back(std::move(tileInfo2));
-  tiles.push_back(std::move(tileInfo3));
-
-  tileLayer = std::make_unique<TileLayer>();
-  tileLayer->height = 1;
-  tileLayer->width = 1;
-  tileLayer->tiles = std::move(tiles);
-
-  Tile* tile = world.spawnEntity<Tile>();
-  tile->setPosition({2.0f, 3.0f});
-  tile->setTileMap(tileLayer.get());
-
-
-  // DEBT! this should be "resourceManager.loadAsset<TileMap>()"
-  // resourceManager.loadTileMapAsset("level-1", "level-1.json");
-  // TileMapEntity tileMap;
-  // tileMap.setWorld(this);
-  // tileMap.setTileLayer(); // later it should be getRendercomponent().setTileMap(); instead.
-  // tileMap.initialize();
-  // tileMap.getRenderComponent().setTileMap(resourceManager.getTileMapAsset("level-1"));
-  // world.spawnEntity(TileMap);
 
   spdlog::info("Game initialized.");
 }

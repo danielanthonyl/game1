@@ -82,23 +82,30 @@ bool ResourceManager::loadTileSetAsset(const std::string& id, const std::string&
     // DEBT! store tileSetDTO when needed.
     TileSetDTO tileSetDTO = NlohmannJsonParser::parseTileSet(tileSetAssetPath);
 
-    auto texture = std::make_unique<sf::Texture>();
+    auto texturePtr = std::make_unique<sf::Texture>();
 
-    if(!texture->loadFromFile(tileSetDTO.texturePath))
+    if (!texturePtr->loadFromFile(tileSetDTO.texturePath))
     {
-      spdlog::error("error loading texture", tileSetDTO.texturePath);
+      spdlog::error("error loading texture {}", tileSetDTO.texturePath);
       throw std::runtime_error("error loading texture.");
-    };
+    }
 
-    tileMapTextures[id] = std::move(texture);
+    tileMapTextures[id] = std::move(texturePtr);
 
+    auto& texture = tileMapTextures[id];
     auto tileSet = std::make_unique<TileSet>();
+
+    assert(texture->getSize().x % tileSetDTO.tileSize.width == 0);
+    assert(texture->getSize().y % tileSetDTO.tileSize.height == 0);
 
     tileSet->texture = tileMapTextures[id].get();
     tileSet->tileSize = tileSetDTO.tileSize;
+    tileSet->tileSetSize = {
+      static_cast<int>(texture->getSize().x / tileSetDTO.tileSize.width),
+      static_cast<int>(texture->getSize().y / tileSetDTO.tileSize.height)
+    };
 
     tileSets[id] = std::move(tileSet);
-
 
     spdlog::info("Loaded texture '{}' from {}", id, tileSetAssetPath);
     return true;

@@ -38,7 +38,7 @@ void PhysicsComponent::createBox(const float width, const float height, const fl
   b2CreatePolygonShape(bodyId, &shape, &box);
 }
 
-void PhysicsComponent::createChain()
+void PhysicsComponent::createChain(const std::vector<b2Vec2> points)
 {
   if (!b2Body_IsValid(bodyId))
   {
@@ -46,12 +46,12 @@ void PhysicsComponent::createChain()
     return;
   };
 
-  static std::vector<b2Vec2> points = {
-      {-20.0f, 0.0f},
-      {-5.0f, 0.0f},
-      {5.0f, 0.0f},
-      {20.0f, 0.0f},
-  };
+  // static std::vector<b2Vec2> points = {
+  //     {-20.0f, 0.0f},
+  //     {-5.0f, 0.0f},
+  //     {5.0f, 0.0f},
+  //     {20.0f, 0.0f},
+  // };
 
   b2ChainDef chainDef = b2DefaultChainDef();
   chainDef.count = points.size();
