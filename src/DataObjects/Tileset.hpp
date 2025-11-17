@@ -8,8 +8,8 @@
 // DEBT! maybe this is the "IntVector" engine vectors.
 struct IntVector
 {
-  int width; // in pixels
-  int height; // in pixels
+  int width;
+  int height;
 };
 
 struct TileSetDTO
@@ -26,9 +26,14 @@ struct TileSet
 {
 public:
   sf::Texture* texture;
-  IntVector tileSize; // in pixels
-
-
+  /**
+   * Unit: Pixels
+   */
+  IntVector tileSize;
+  /**
+   * Unit: Tiles
+   */
+  IntVector tileSetSize;
 };
 
 struct TileInfo
@@ -41,6 +46,11 @@ struct TileInfo
 struct TileLayer
 {
   std::vector<std::unique_ptr<TileInfo>> tiles;
+  /**
+   * DOC! tiles.size() must equal width * height;
+   * the width and height, defines the grid. Inconsistent values will break rendering logic.
+   *
+   * */
   int width; // in tiles
   int height; // in tiles
 };

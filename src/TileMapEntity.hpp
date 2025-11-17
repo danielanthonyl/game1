@@ -3,27 +3,24 @@
 #include "Entity.hpp"
 #include "DataObjects/Tileset.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
+#include "Components/TileMapComponent.hpp"
 
-class Tile : public Entity
+class TileMapEntity : public Entity
 {
 public:
-  explicit Tile();
+  explicit TileMapEntity();
 
   void initialize() override;
 
   void draw(sf::RenderWindow& target) override;
 
-  void initialiseSprites();
-
   void setTilePosition(sf::Vector2f& position);
 
-  // DEBT! should accept a TileMap when it exists.
-  void setTileMap(TileLayer* tileLayerPtr);
+  TileMapComponent& getTileMapComponent();
 
 private:
   TileLayer* tileLayer;
-  std::vector<std::unique_ptr<sf::Sprite>> sprites;
-
+  TileMapComponent tileMapComponent;
 };
 
-REGISTER_ENTITY(Tile);
+REGISTER_ENTITY(TileMapEntity);
